@@ -5,7 +5,7 @@ import { connectDB } from "@/app/_lib/databaseConnection";
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // ✅ params is Promise
+  context: { params: Promise<{ id: string }> } // ✅ params is Promise
 ) {
   try {
     await connectDB();
@@ -16,7 +16,7 @@ export async function PATCH(
     }
 
     // ✅ unwrap params correctly
-    const { id } = await params;
+    const { id } = await context.params;
 
     const body = await req.json();
 
