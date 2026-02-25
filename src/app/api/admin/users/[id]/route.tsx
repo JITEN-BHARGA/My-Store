@@ -3,7 +3,7 @@ import { connectDB } from "@/app/_lib/databaseConnection";
 import User from "@/module/user";
 import { verifyAdmin } from "@/app/lib/middleware/adminAuth";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   await connectDB();
 
   // ✅ Verify admin
@@ -12,6 +12,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const params = await context.params;
   const userId = params.id;
   if (!userId) {
     return NextResponse.json({ message: "User ID is required" }, { status: 400 });
