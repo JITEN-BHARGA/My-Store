@@ -21,9 +21,40 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotMsg, setForgotMsg] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotMsg("");
+
+    try {
+      const res = await fetch("/api/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setForgotMsg(data.message || "Error sending reset email");
+      } else {
+        setForgotMsg("Password reset link sent to your email 📩");
+        setForgotEmail("");
+      }
+    } catch {
+      setForgotMsg("Something went wrong");
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -67,11 +98,12 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#eef2ff]">
       <div className="flex w-[900px] rounded-3xl shadow-xl overflow-hidden bg-white">
-        
         {/* LEFT SIDE FORM */}
         <div className="w-1/2 p-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
-          <p className="text-gray-500 mb-6">Welcome back! Please enter your details</p>
+          <p className="text-gray-500 mb-6">
+            Welcome back! Please enter your details
+          </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <input
@@ -130,7 +162,19 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {message && <p className="mt-4 text-sm text-center text-red-500">{message}</p>}
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() => setShowForgot(true)}
+              className="text-sm text-indigo-600 hover:underline"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          {message && (
+            <p className="mt-4 text-sm text-center text-red-500">{message}</p>
+          )}
 
           <p className="mt-6 text-sm text-gray-600 text-center">
             Don’t have an account?{" "}
@@ -153,6 +197,48 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      {showForgot && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-[400px] shadow-xl relative">
+            <button
+              onClick={() => setShowForgot(false)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+
+            <h3 className="text-xl font-bold mb-2">Forgot Password</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Enter your login email and we’ll send you a reset link.
+            </p>
+
+            <form onSubmit={handleForgotSubmit} className="space-y-4">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                required
+              />
+
+              <button
+                type="submit"
+                disabled={forgotLoading}
+                className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700"
+              >
+                {forgotLoading ? "Sending..." : "Send Reset Link"}
+              </button>
+            </form>
+
+            {forgotMsg && (
+              <p className="mt-3 text-sm text-center text-red-500">
+                {forgotMsg}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

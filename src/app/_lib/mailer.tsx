@@ -12,7 +12,7 @@ export const sendVerificationEmail = async (
     },
   });
 
-  const verifyUrl = `${process.env.DOMAIN}/api/verify-email?token=${token}`;
+  const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-email?token=${token}`;
 
   await transporter.sendMail({
     from: `"Your App" <${process.env.EMAIL_USER}>`,
