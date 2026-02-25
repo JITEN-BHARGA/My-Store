@@ -3,7 +3,7 @@ import { connectDB } from "@/app/_lib/databaseConnection";
 import Product from "@/module/product";
 import { verifyAdmin } from "@/app/lib/middleware/adminAuth";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   await connectDB();
 
   // ✅ Verify admin
@@ -12,6 +12,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const params = await context.params;
   const productId = params.id;
   if (!productId) {
     return NextResponse.json({ message: "Product ID is required" }, { status: 400 });
