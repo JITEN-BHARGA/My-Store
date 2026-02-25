@@ -44,8 +44,8 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> },
 ) {
   await connectDB();
-
-  const { id } = await context.params; // ✅ await params
+  const params = await context.params;
+  const  id  = params.id; // ✅ await params
 
   const userId = await getUserIdFromToken(req);
   if (!userId)
