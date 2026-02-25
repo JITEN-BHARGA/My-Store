@@ -91,9 +91,15 @@ export async function PATCH(req: NextRequest) {
     const item = order.items.find((i: any) => {
       if (!i.productId) return false;
 
+      const sellerIdStr = typeof i.productId.sellerId === 'string' 
+        ? i.productId.sellerId 
+        : i.productId.sellerId._id;
+
+      const sellerIdValue = typeof sellerIdStr === 'string' ? sellerIdStr : sellerIdStr.toString();
+
       return (
         i.productId._id.toString() === productId &&
-        new mongoose.Types.ObjectId(i.productId.sellerId).equals(sellerId)
+        new mongoose.Types.ObjectId(sellerIdValue).equals(new mongoose.Types.ObjectId(sellerId.toString()))
       );
     });
 

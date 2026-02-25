@@ -5,12 +5,13 @@ import mongoose from "mongoose";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { id } = await params;    
+    const params = await context.params;
+    const id = params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
