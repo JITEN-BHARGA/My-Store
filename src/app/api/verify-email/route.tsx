@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     await user.save();
 
-    return NextResponse.redirect(`${process.env.DOMAIN}/login`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL}/login`);
   } catch (error) {
     return NextResponse.json(
       { message: "Verification failed" },
