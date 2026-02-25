@@ -1,7 +1,9 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type LoginForm = {
   email: string;
@@ -11,7 +13,6 @@ type LoginForm = {
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [form, setForm] = useState<LoginForm>({
     email: "",
@@ -78,12 +79,9 @@ export default function LoginPage() {
       if (!res.ok) {
         setMessage(data.message || "Invalid credentials");
       } else {
-        if (data.token) localStorage.setItem("token", data.token);
-
         setMessage("Login successful 🎉 Redirecting...");
 
         setTimeout(() => {
-          // ✅ Redirect based on role
           if (form.role === "seller") router.push("/dashboard");
           else router.push("/");
         }, 1000);
