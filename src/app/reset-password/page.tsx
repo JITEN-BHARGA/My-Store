@@ -1,13 +1,18 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function ResetPasswordPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
 
-  const token = searchParams.get("token");
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
