@@ -39,7 +39,7 @@ export async function GET(
 // ✏️ UPDATE PRODUCT (Only Seller Owner)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
@@ -47,7 +47,10 @@ export async function PATCH(
     const sellerId = getSellerId(req);
     const body = await req.json();
 
-    const product = await Product.findById(params.id);
+    const params = await context.params;
+    const id = params.id;
+
+    const product = await Product.findById(id);
 
     if (!product) {
       return NextResponse.json(
@@ -88,13 +91,14 @@ export async function PATCH(
 // ❌ DELETE PRODUCT (Only Seller Owner)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
     const sellerId = getSellerId(req);
 
+    const params = await context.params;
     const product = await Product.findById(params.id);
 
     if (!product) {
