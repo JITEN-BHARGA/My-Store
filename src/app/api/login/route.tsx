@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { NextRequest , NextResponse } from "next/server"
 import bcrypt from 'bcryptjs'
 import User from "@/module/user"
@@ -45,7 +47,7 @@ export async function POST(request : NextRequest){
             })
         }
 
-        const token = jwtGeneration(existUser._id.toString());
+        const token = jwtGeneration(existUser._id.toString() , existUser.role);
 
 
 

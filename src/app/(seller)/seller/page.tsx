@@ -143,8 +143,7 @@ export default function CreateProductPage() {
       imageURL: images,
       attributes: attributeObject,
       finalPrice:
-        Number(formData.currentPrice) *
-        (1 - Number(formData.discount) / 100),
+        Number(formData.currentPrice) * (1 - Number(formData.discount) / 100),
       isActive: true,
     };
 
@@ -165,7 +164,7 @@ export default function CreateProductPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <SellerNavbar />
 
-      <div className="max-w-6xl mx-auto py-10 px-8">
+      <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6 md:px-8">
         <h1 className="text-3xl font-bold text-indigo-600 mb-10">
           Create Product
         </h1>
@@ -173,7 +172,7 @@ export default function CreateProductPage() {
         <form onSubmit={handleSubmit} className="space-y-10">
           {/* 🔹 BASIC INFO */}
           <Section title="Basic Information">
-            <Grid>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Field label="Product Name">
                 <Input name="name" onChange={handleChange} required />
               </Field>
@@ -207,12 +206,12 @@ export default function CreateProductPage() {
                   required
                 />
               </Field>
-            </Grid>
+            </div>
           </Section>
 
           {/* 🔹 PRICING */}
           <Section title="Pricing">
-            <Grid>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Field label="Price">
                 <Input
                   name="currentPrice"
@@ -225,7 +224,7 @@ export default function CreateProductPage() {
               <Field label="Discount (%)">
                 <Input name="discount" type="number" onChange={handleChange} />
               </Field>
-            </Grid>
+            </div>
           </Section>
 
           {/* 🔹 IMAGES */}
@@ -249,7 +248,10 @@ export default function CreateProductPage() {
 
             <div className="flex gap-3 overflow-x-auto mt-4">
               {images.map((img, i) => (
-                <div key={i} className="w-20 overflow-hidden rounded-lg border">
+                <div
+                  key={i}
+                  className="w-20 flex-shrink-0 overflow-hidden rounded-lg border"
+                >
                   <img src={img} className="w-full h-full object-cover" />
                 </div>
               ))}
@@ -262,7 +264,7 @@ export default function CreateProductPage() {
               {attributes.map((attr, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-[1fr_1fr_auto] gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3"
                 >
                   <input
                     placeholder="Key"
@@ -270,7 +272,7 @@ export default function CreateProductPage() {
                     onChange={(e) =>
                       updateAttribute(index, "key", e.target.value)
                     }
-                    className="h-11 border border-gray-300 px-3 rounded-lg"
+                    className="h-11 border border-gray-300 px-3 rounded-lg w-full"
                   />
 
                   <input
@@ -279,7 +281,7 @@ export default function CreateProductPage() {
                     onChange={(e) =>
                       updateAttribute(index, "value", e.target.value)
                     }
-                    className="h-11 border border-gray-300 px-3 rounded-lg"
+                    className="h-11 border border-gray-300 px-3 rounded-lg w-full"
                   />
 
                   <button

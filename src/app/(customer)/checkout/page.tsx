@@ -159,9 +159,9 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800 pb-10">
       <Navbar />
 
-      <div className="max-w-[600px] mx-auto p-6 flex flex-col gap-6">
+      <div className="max-w-[600px] w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
         {/* PRICE DETAILS */}
-        <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+        <section className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
           <h2 className="text-2xl font-bold text-gray-900">1. Price Details</h2>
 
           <div className="flex justify-between text-gray-700">
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
             <span className="text-green-600 font-bold">FREE</span>
           </div>
 
-          <div className="border-t pt-4 flex justify-between">
+          <div className="border-t pt-4 flex justify-between flex-col sm:flex-row sm:items-center sm:gap-4">
             <span className="text-lg font-bold text-gray-900">
               Total Amount
             </span>
@@ -202,7 +202,7 @@ export default function CheckoutPage() {
         </section>
 
         {/* SHIPPING ADDRESS */}
-        <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
+        <section className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
           <h2 className="text-2xl font-bold text-gray-900">
             2. Shipping Address
           </h2>
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Address Type
                 </p>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   {["home", "work", "other"].map((type) => (
                     <button
                       type="button"
@@ -229,11 +229,11 @@ export default function CheckoutPage() {
                         })
                       }
                       className={`px-4 py-2 rounded-lg border text-sm font-medium transition
-                      ${
-                        addressForm.type === type
-                          ? "bg-indigo-600 text-white border-indigo-600"
-                          : "border-gray-300 text-gray-600 hover:border-indigo-400"
-                      }`}
+                    ${
+                      addressForm.type === type
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "border-gray-300 text-gray-600 hover:border-indigo-400"
+                    }`}
                     >
                       {type.toUpperCase()}
                     </button>
@@ -261,7 +261,7 @@ export default function CheckoutPage() {
                 }
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
                   required
                   placeholder="Pincode"
@@ -340,7 +340,7 @@ export default function CheckoutPage() {
                       : "border-gray-100"
                   }`}
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-4">
                     <div>
                       <p className="font-bold text-gray-900">{addr.name}</p>
                       <p className="text-xs text-gray-500 mb-2">{addr.phone}</p>
@@ -349,26 +349,15 @@ export default function CheckoutPage() {
                         {addr.city}, {addr.state} - {addr.pincode}
                       </p>
 
-                      {/* EDIT BUTTON */}
-                      <div className="flex justify-between items-center mt-2">
+                      {/* EDIT / DELETE */}
+                      <div className="flex gap-4 mt-2 flex-wrap">
                         <button
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             setEditingAddressId(addr._id);
                             setIsAddingNew(true);
-
-                            setAddressForm({
-                              name: addr.name,
-                              phone: addr.phone,
-                              pincode: addr.pincode,
-                              state: addr.state,
-                              city: addr.city,
-                              house: addr.house,
-                              area: addr.area,
-                              landmark: addr.landmark,
-                              type: addr.type,
-                            });
+                            setAddressForm({ ...addr });
                           }}
                           className="text-xs text-indigo-600 font-semibold hover:underline"
                         >

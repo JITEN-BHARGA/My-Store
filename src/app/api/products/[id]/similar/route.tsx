@@ -73,7 +73,7 @@ export async function GET(
     const unique = Array.from(
       new Map(similar.map((p) => [p._id.toString(), p])).values()
     );
-    console.log(unique);
+    
     return NextResponse.json(unique.slice(0, 6));
   } catch (error: any) {
     console.error(error);

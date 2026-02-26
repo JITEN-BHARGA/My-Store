@@ -70,6 +70,7 @@ export default function LoginPage() {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(form),
       });
 
@@ -94,10 +95,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#eef2ff]">
-      <div className="flex w-[900px] rounded-3xl shadow-xl overflow-hidden bg-white">
+    <div className="flex min-h-screen items-center justify-center bg-[#eef2ff] p-4">
+      <div className="flex flex-col lg:flex-row w-full max-w-[900px] rounded-3xl shadow-xl overflow-hidden bg-white">
         {/* LEFT SIDE FORM */}
-        <div className="w-1/2 p-10">
+        <div className="w-full lg:w-1/2 p-6 sm:p-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
           <p className="text-gray-500 mb-6">
             Welcome back! Please enter your details
@@ -125,7 +126,7 @@ export default function LoginPage() {
             />
 
             {/* ROLE SELECTION */}
-            <div className="flex gap-4 mt-2">
+            <div className="flex gap-4 mt-2 flex-wrap">
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
@@ -160,7 +161,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="text-right">
+          <div className="text-right mt-2">
             <button
               type="button"
               onClick={() => setShowForgot(true)}
@@ -186,8 +187,8 @@ export default function LoginPage() {
         </div>
 
         {/* RIGHT SIDE PANEL */}
-        <div className="w-1/2 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center">
-          <div className="text-white text-center px-6">
+        <div className="w-full lg:w-1/2 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center p-6 lg:p-0">
+          <div className="text-white text-center px-4">
             <h3 className="text-2xl font-bold mb-3">Welcome Back 👋</h3>
             <p className="text-indigo-100 text-sm">
               Login to continue managing your account securely and easily.
@@ -195,9 +196,10 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
       {showForgot && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-[400px] shadow-xl relative">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-[400px] shadow-xl relative">
             <button
               onClick={() => setShowForgot(false)}
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"

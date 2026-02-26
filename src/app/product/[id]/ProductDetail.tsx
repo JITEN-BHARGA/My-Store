@@ -80,19 +80,16 @@ export default function ProductDetail({ product }: { product: Product }) {
     <div className="bg-white">
       <Navbar />
 
-      <div className="bg-white min-h-screen max-w-screen-2xl mx-auto grid grid-cols-2 md:grid-cols-2 gap-12 p-4 md:p-10">
+      <div className="bg-white min-h-screen max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 p-4 md:p-10">
         {/* LEFT SIDE - IMAGE GALLERY */}
-        <div className="flex gap-6 items-start">
-          {/* 🔹 THUMBNAILS (LEFT) */}
-          <div
-            className="relative bg-white rounded-xl overflow-hidden grid grid-cols-1"
-            style={{ width: "100px", height: "600px" }}
-          >
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
+          {/* THUMBNAILS */}
+          <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-x-visible w-full md:w-auto">
             {product.imageURL?.slice(0, 3).map((img) => (
               <button
                 key={img}
                 onClick={() => setSelectedImage(img)}
-                className={`w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border-2 flex items-center justify-center ${
+                className={`w-20 h-20 md:w-24 md:h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 flex items-center justify-center ${
                   selectedImage === img
                     ? "border-indigo-600 ring-2 ring-indigo-200"
                     : "border-gray-200 hover:border-indigo-400"
@@ -107,12 +104,11 @@ export default function ProductDetail({ product }: { product: Product }) {
             ))}
           </div>
 
-          {/* 🔹 MAIN IMAGE (RIGHT) */}
+          {/* MAIN IMAGE */}
           <div
-            className="relative bg-white rounded-xl overflow-hidden flex items-center justify-center cursor-zoom-in border border-black"
+            className="relative bg-white rounded-xl overflow-hidden flex items-center justify-center cursor-zoom-in border border-black w-full md:w-[600px] aspect-square"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            style={{ width: "600px", height: "600px" }}
           >
             <img
               src={selectedImage}
@@ -135,7 +131,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           <p className="text-gray-500 mt-1">{product.companyName}</p>
 
           {/* PRICE */}
-          <div className="flex items-center gap-3 mt-4">
+          <div className="flex items-center gap-3 mt-4 flex-wrap">
             <span className="text-3xl font-bold text-gray-900">
               ₹{Math.round(product.finalPrice)}
             </span>
@@ -176,7 +172,7 @@ export default function ProductDetail({ product }: { product: Product }) {
                 Specifications
               </h3>
 
-              <div className="grid grid-cols-1 gap-3 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 {Object.entries(product.attributes).map(([key, value]) => (
                   <div
                     key={key}
@@ -192,23 +188,20 @@ export default function ProductDetail({ product }: { product: Product }) {
             </div>
           )}
 
-          {/* REVIEWS SECTION */}
+          {/* REVIEWS */}
           <div className="mt-10 mb-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Ratings & Reviews
             </h3>
 
             {/* AVERAGE RATING */}
-            <div className="flex items-center gap-3 mb-6">
-              {/* BIG NUMBER */}
+            <div className="flex items-center gap-3 mb-6 flex-wrap">
               <span className="text-3xl font-bold text-gray-900">
                 {Number(product.averageRating || 0).toFixed(1)}
               </span>
 
-              {/* STARS */}
               <StarRating rating={Number(product.averageRating || 0)} />
 
-              {/* REVIEW COUNT */}
               <span className="text-gray-500 text-sm">
                 ({product.reviewCount || 0} reviews)
               </span>
@@ -216,17 +209,16 @@ export default function ProductDetail({ product }: { product: Product }) {
 
             {/* REVIEW LIST */}
             {displayedReviews.length > 0 ? (
-              <div className="h-[516px] overflow-y-auto pr-2 space-y-5 border rounded-lg p-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+              <div className="h-[400px] md:h-[516px] overflow-y-auto pr-2 space-y-5 border rounded-lg p-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
                 {displayedReviews.map((review, index) => (
                   <div
                     key={index}
                     className="border border-gray-300 rounded-lg p-4"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                       <p className="font-medium text-gray-800">
                         {review.userName || "Anonymous"}
                       </p>
-
                       <StarRating rating={review.rating} />
                     </div>
 
@@ -254,6 +246,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           </button>
         </div>
       </div>
+
       <SimilarProducts productId={product._id} />
 
       <Footer />

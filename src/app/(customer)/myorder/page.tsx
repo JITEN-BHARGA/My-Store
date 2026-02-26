@@ -74,7 +74,7 @@ export default function MyOrdersPage() {
             console.error("Review fetch error", err);
           }
         }
-      })
+      }),
     );
 
     setRatings(newRatings);
@@ -145,7 +145,7 @@ export default function MyOrdersPage() {
         </p>
       </section>
 
-      <section className="px-6 py-10">
+      <section className="px-4 sm:px-6 py-10 max-w-6xl mx-auto space-y-6">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">Recent Orders</h2>
 
         <div className="space-y-6">
@@ -162,17 +162,20 @@ export default function MyOrdersPage() {
                 const isDelivered = item.isDelivered;
 
                 return (
-                  <div key={item._id} className="flex gap-6 border-t pt-4">
+                  <div
+                    key={item._id}
+                    className="flex flex-col sm:flex-row gap-4 sm:gap-6 border-t pt-4"
+                  >
                     <img
                       src={
                         item.productId?.imageURL?.[0] ||
                         "https://via.placeholder.com/150"
                       }
                       alt={item.productId?.name}
-                      className="h-88 px-2 py-2 object-cover rounded-lg"
+                      className="w-full sm:w-32 h-32 object-cover rounded-lg flex-shrink-0"
                     />
 
-                    <div className="flex-1 space-y-1">
+                    <div className="flex-1 space-y-2">
                       <p className="font-medium text-gray-900">
                         {item.productId?.name}
                       </p>
@@ -214,7 +217,6 @@ export default function MyOrdersPage() {
                           <p className="text-sm font-medium mb-1">
                             Your Rating:
                           </p>
-
                           <div className="flex gap-1 mb-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <span key={star} className="text-xl">
@@ -237,7 +239,7 @@ export default function MyOrdersPage() {
                             Rate this product:
                           </p>
 
-                          <div className="flex gap-1 mb-2">
+                          <div className="flex gap-1 mb-2 flex-wrap">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <button
                                 key={star}

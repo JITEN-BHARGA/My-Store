@@ -91,10 +91,10 @@ function SearchContent() {
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <Navbar />
 
-      <div className="px-6 py-10 grid grid-cols-12 gap-6">
+      <div className="px-4 sm:px-6 py-10 grid grid-cols-12 gap-6">
         {/* 🔹 LEFT SIDEBAR FILTER */}
         <div className="col-span-12 md:col-span-3">
-          <div className="sticky top-24 bg-white p-4 rounded-lg shadow">
+          <div className="sticky top-20 md:top-24 bg-white p-4 rounded-lg shadow w-full">
             <h3 className="font-bold text-lg mb-4">Filters</h3>
 
             {/* BRAND */}

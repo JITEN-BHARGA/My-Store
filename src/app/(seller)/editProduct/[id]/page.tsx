@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import SellerNavbar from "@/components/sellerNavbar";
 
 type Attribute = { key: string; value: string };
 
@@ -22,7 +22,7 @@ export default function EditProductPage() {
   const params = useParams();
   const router = useRouter();
   const productId = params.id as string;
-  console.log(productId)
+  console.log(productId);
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -49,10 +49,10 @@ export default function EditProductPage() {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        console.log(productId)
-        const res = await fetch(`/api/my-products/${productId}`,
-          {cache: "no-store"}
-        );
+        console.log(productId);
+        const res = await fetch(`/api/my-products/${productId}`, {
+          cache: "no-store",
+        });
         const data = await res.json();
 
         if (!data?.product) return;
@@ -131,34 +131,37 @@ export default function EditProductPage() {
   };
 
   const handleImageDelete = async (index: number) => {
-  const imageToDelete = images[index];
-  
-  if (!imageToDelete) return;
+    const imageToDelete = images[index];
 
-  try {
-    // Extract the public_id from the Cloudinary URL
-    // Assuming your URLs are like: https://res.cloudinary.com/.../v123456/ecommerce/<public_id>.jpg
-    const urlParts = imageToDelete.split("/");
-    const fileName = urlParts[urlParts.length - 1]; // e.g. "abc123.jpg"
-    const public_id = `ecommerce/${fileName.split(".")[0]}`; // remove extension and prepend folder
+    if (!imageToDelete) return;
 
-    const res = await fetch(`/api/image-uploader?public_id=${encodeURIComponent(public_id)}`, {
-      method: "DELETE",
-    });
+    try {
+      // Extract the public_id from the Cloudinary URL
+      // Assuming your URLs are like: https://res.cloudinary.com/.../v123456/ecommerce/<public_id>.jpg
+      const urlParts = imageToDelete.split("/");
+      const fileName = urlParts[urlParts.length - 1]; // e.g. "abc123.jpg"
+      const public_id = `ecommerce/${fileName.split(".")[0]}`; // remove extension and prepend folder
 
-    const data = await res.json();
+      const res = await fetch(
+        `/api/image-uploader?public_id=${encodeURIComponent(public_id)}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-    if (!res.ok || !data.success) {
-      console.error("Failed to delete image:", data.message);
-      return;
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        console.error("Failed to delete image:", data.message);
+        return;
+      }
+
+      // Remove image locally
+      setImages((prev) => prev.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error("Error deleting image:", error);
     }
-
-    // Remove image locally
-    setImages((prev) => prev.filter((_, i) => i !== index));
-  } catch (error) {
-    console.error("Error deleting image:", error);
-  }
-};
+  };
 
   /* ================= ATTRIBUTES ================= */
   const addAttribute = () =>
@@ -253,9 +256,9 @@ export default function EditProductPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
-      <Navbar />
+      <SellerNavbar />
 
-      <div className="max-w-6xl mx-auto py-10 px-8">
+      <div className="max-w-6xl w-full mx-auto py-10 px-4 sm:px-8">
         <h1 className="text-3xl font-bold text-indigo-600 mb-10">
           Edit Product
         </h1>
@@ -263,7 +266,7 @@ export default function EditProductPage() {
         <form onSubmit={handleSubmit} className="space-y-10">
           {/* BASIC INFO */}
           <Section title="Basic Information">
-            <Grid>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Field label="Product Name">
                 <Input
                   name="name"
@@ -299,12 +302,12 @@ export default function EditProductPage() {
                   required
                 />
               </Field>
-            </Grid>
+            </div>
           </Section>
 
           {/* PRICING */}
           <Section title="Pricing">
-            <Grid>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Field label="Price (₹)">
                 <Input
                   name="currentPrice"
@@ -323,7 +326,7 @@ export default function EditProductPage() {
                   onChange={handleChange}
                 />
               </Field>
-            </Grid>
+            </div>
 
             <p className="text-sm text-gray-500 mt-2">
               Final Price: ₹{finalPrice}
@@ -335,7 +338,7 @@ export default function EditProductPage() {
             <input type="file" multiple onChange={handleImageUpload} />
             {uploading && <p>Uploading images...</p>}
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex flex-wrap gap-3 mt-4">
               {images.map((img, i) => (
                 <div key={i} className="relative w-20 h-20">
                   <img
@@ -356,31 +359,33 @@ export default function EditProductPage() {
 
           {/* ATTRIBUTES */}
           <Section title="Attributes">
-            {attributes.map((attr, index) => (
-              <div key={index} className="flex gap-3 mb-2">
-                <input
-                  value={attr.key}
-                  placeholder="Key"
-                  onChange={(e) =>
-                    updateAttribute(index, "key", e.target.value)
-                  }
-                  className="border px-2 py-1"
-                />
-                <input
-                  value={attr.value}
-                  placeholder="Value"
-                  onChange={(e) =>
-                    updateAttribute(index, "value", e.target.value)
-                  }
-                  className="border px-2 py-1"
-                />
-                <button type="button" onClick={() => removeAttribute(index)}>
-                  ❌
-                </button>
-              </div>
-            ))}
+            <div className="flex flex-col gap-2">
+              {attributes.map((attr, index) => (
+                <div key={index} className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    value={attr.key}
+                    placeholder="Key"
+                    onChange={(e) =>
+                      updateAttribute(index, "key", e.target.value)
+                    }
+                    className="border px-2 py-1 flex-1"
+                  />
+                  <input
+                    value={attr.value}
+                    placeholder="Value"
+                    onChange={(e) =>
+                      updateAttribute(index, "value", e.target.value)
+                    }
+                    className="border px-2 py-1 flex-1"
+                  />
+                  <button type="button" onClick={() => removeAttribute(index)}>
+                    ❌
+                  </button>
+                </div>
+              ))}
+            </div>
 
-            <button type="button" onClick={addAttribute}>
+            <button type="button" onClick={addAttribute} className="mt-2">
               + Add Attribute
             </button>
           </Section>

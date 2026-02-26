@@ -57,32 +57,31 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-white shadow">
+    <nav className="flex flex-wrap items-center justify-between px-4 sm:px-6 md:px-6 py-4 bg-white shadow">
       {/* LOGO */}
-      <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}`} className="text-2xl font-bold text-indigo-600">
+      <Link href="/" className="text-2xl font-bold text-indigo-600">
         MyStore
       </Link>
-      
 
       {/* SEARCH BOX */}
-      <div className="w-2xs hidden md:flex items-center border rounded-lg px-2 py-1 bg-gray-100">
+      <div className="w-full sm:w-auto flex items-center border rounded-lg px-2 py-1 bg-gray-100 mt-2 md:mt-0">
         <input
           type="text"
           placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="bg-transparent outline-none px-2 w-40 md:w-56 text-gray-800"
+          className="bg-transparent outline-none px-2 w-full sm:w-40 md:w-56 text-gray-800"
         />
         <button onClick={handleSearch}>🔍</button>
       </div>
 
       {/* RIGHT SECTION */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 mt-2 md:mt-0">
         <Link href="/myorder" className="text-indigo-600 font-semibold text-xl">
           📦
         </Link>
-        {/* ❤️ WISHLIST ICON (added left of cart) */}
+
         <Link
           href="/wishlist"
           className="text-indigo-600 font-semibold text-xl"
@@ -90,16 +89,14 @@ const Navbar: React.FC = () => {
           ❤️
         </Link>
 
-        {/* 🛒 CART ICON */}
         <Link href="/cart" className="text-indigo-600 font-semibold text-xl">
           🛒
         </Link>
 
-        {/* PROFILE */}
+        {/* PROFILE DROPDOWN */}
         <div className="relative">
           {user ? (
             <>
-              {/* Avatar */}
               <button
                 onClick={() => setOpen(!open)}
                 className="bg-indigo-600 text-white px-3 py-1 rounded-full font-semibold"
@@ -107,7 +104,6 @@ const Navbar: React.FC = () => {
                 {user.name.charAt(0).toUpperCase()}
               </button>
 
-              {/* DROPDOWN */}
               {open && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-md p-3 text-sm text-gray-800 z-50">
                   <p className="font-semibold">{user.name}</p>
@@ -123,7 +119,7 @@ const Navbar: React.FC = () => {
               )}
             </>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               <Link href="/login" className="text-indigo-600 font-semibold">
                 Login
               </Link>

@@ -68,12 +68,12 @@ export default function WishlistPage() {
       <Navbar />
 
       {/* 🧾 PAGE TITLE */}
-      <div className="max-w-full mx-auto w-full px-6 py-6">
+      <div className="max-w-full mx-auto w-full px-4 sm:px-6 py-6">
         <h1 className="text-2xl font-bold">My Wishlist ❤️</h1>
       </div>
 
       {/* 📦 PRODUCT GRID */}
-      <div className="max-w-full mx-auto w-full px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-grow">
+      <div className="max-w-full mx-auto w-full px-4 sm:px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-grow">
         {products.length > 0 ? (
           products.map((product) => (
             <div
@@ -91,10 +91,12 @@ export default function WishlistPage() {
               </div>
 
               {/* 📦 NAME */}
-              <h3 className="font-semibold mt-3">{product.name}</h3>
+              <h3 className="font-semibold mt-3 text-sm sm:text-base">
+                {product.name}
+              </h3>
 
               {/* ⭐ RATING */}
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm">
                 <StarRating rating={Number(product.averageRating || 0)} />
 
                 <span className="text-sm">
@@ -107,12 +109,12 @@ export default function WishlistPage() {
               </div>
 
               {/* 📝 DESCRIPTION */}
-              <p className="mt-2 text-gray-500 line-clamp-2">
+              <p className="mt-2 text-gray-500 line-clamp-2 text-xs sm:text-sm">
                 {product.itemInfo}
               </p>
 
               {/* 💰 PRICE */}
-              <div className="mt-2 flex items-center gap-4">
+              <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                 <span className="text-lg font-bold text-gray-900">
                   ₹{Number(product.finalPrice).toFixed(2)}
                 </span>
@@ -127,13 +129,13 @@ export default function WishlistPage() {
               </div>
 
               {/* ❤️ REMOVE + 🛒 ADD TO CART */}
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex flex-col sm:flex-row gap-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     removeFromWishlist(product._id);
                   }}
-                  className="w-1/2 border border-red-400 hover:bg-red-500 hover:text-white text-red-500 px-4 py-2 rounded-lg flex items-center justify-center gap-2"
+                  className="w-full sm:w-1/2 border border-red-400 hover:bg-red-500 hover:text-white text-red-500 px-4 py-2 rounded-lg flex items-center justify-center gap-2"
                 >
                   ❤️ Remove
                 </button>
@@ -143,7 +145,7 @@ export default function WishlistPage() {
                     e.stopPropagation();
                     addToCart(product._id);
                   }}
-                  className="w-1/2 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
+                  className="w-full sm:w-1/2 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700"
                 >
                   Add to Cart
                 </button>

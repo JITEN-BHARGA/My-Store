@@ -12,17 +12,17 @@ export default function AdminNavbar() {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap sm:flex-nowrap justify-between items-center">
         {/* Logo */}
         <div
-          className="text-2xl font-bold text-indigo-600 cursor-pointer"
+          className="text-2xl font-bold text-indigo-600 cursor-pointer mb-2 sm:mb-0 flex-shrink-0"
           onClick={() => router.push("/admin/dashboard")}
         >
           Admin Panel
         </div>
 
         {/* Links */}
-        <div className="flex items-center gap-6 text-gray-700 font-medium">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-6 text-gray-700 font-medium">
           <button
             onClick={() => router.push("/admin/dashboard")}
             className="hover:text-indigo-600 transition"
@@ -57,7 +57,7 @@ export default function AdminNavbar() {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="ml-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
+            className="ml-0 sm:ml-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
           >
             Logout
           </button>

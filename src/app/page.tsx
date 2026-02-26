@@ -82,47 +82,47 @@ export default function HomePage() {
       <Navbar />
 
       {/* HERO */}
-      <section className="bg-indigo-600 text-white py-20 px-6">
+      <section className="bg-indigo-600 text-white py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto text-center">
           {/* 🧠 Headline */}
-          <h2 className="text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
             Mega Savings on Your Favorite Brands
           </h2>
 
           {/* 📝 Subtext */}
-          <p className="mt-4 text-lg text-indigo-100 max-w-2xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-indigo-100 max-w-2xl mx-auto">
             Discover unbeatable deals on electronics, fashion, home essentials
             and more. Shop smarter, save bigger — only for a short time.
           </p>
 
           {/* 💸 Offer Highlight */}
-          <p className="mt-3 text-2xl font-bold">
+          <p className="mt-3 text-xl sm:text-2xl font-bold">
             Up to <span className="text-yellow-300">50% OFF</span> + Extra
             Cashback 💳
           </p>
 
           {/* ⭐ Trust Line */}
-          <p className="mt-2 text-sm text-indigo-200">
+          <p className="mt-2 text-xs sm:text-sm text-indigo-200">
             Trusted by 10,000+ happy customers • Fast delivery • Easy returns
           </p>
         </div>
       </section>
 
       {/* CATEGORIES */}
-      <section className="px-6 py-10">
+      <section className="px-4 sm:px-6 py-10">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">
           Shop by Category
         </h2>
 
         <div className="w-full overflow-x-auto">
-          <div className="flex w-max min-w-full justify-between gap-4 px-4">
+          <div className="flex w-max min-w-full justify-start sm:justify-between gap-4 px-2 sm:px-4">
             {categories.map((cat) => (
               <div
                 key={cat}
                 onClick={() =>
                   router.push(`/search?category=${encodeURIComponent(cat)}`)
                 }
-                className="w-[70px] h-[72px] flex-shrink-0 rounded-full bg-white shadow flex items-center justify-center text-2xl cursor-pointer hover:scale-105 transition"
+                className="w-[60px] sm:w-[70px] h-[60px] sm:h-[72px] flex-shrink-0 rounded-full bg-white shadow flex items-center justify-center text-xl sm:text-2xl cursor-pointer hover:scale-105 transition"
                 title={cat}
               >
                 {categoryIcons[cat]}
@@ -133,12 +133,12 @@ export default function HomePage() {
       </section>
 
       {/* FEATURED PRODUCTS */}
-      <section className="px-6 py-10 bg-white">
+      <section className="px-4 sm:px-6 py-10 bg-white">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">
           Featured Products
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {products?.map((item, i) => (
             <ProductCard key={i} product={item} isLoggedIn={isLoggedIn} />
           ))}
@@ -146,8 +146,8 @@ export default function HomePage() {
       </section>
 
       {/* OFFER BANNER */}
-      <section className="bg-orange-500 text-white text-center py-10">
-        <h2 className="text-3xl font-bold">
+      <section className="bg-orange-500 text-white text-center py-8 sm:py-10 px-4 sm:px-6">
+        <h2 className="text-2xl sm:text-3xl font-bold">
           Flat 40% OFF on Limited Edition Products
         </h2>
       </section>

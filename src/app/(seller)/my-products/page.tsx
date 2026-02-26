@@ -74,7 +74,7 @@ export default function MyProductsPage() {
         </div>
       </section>
 
-      <section className="px-6 py-10 max-w-6xl mx-auto space-y-6">
+      <section className="px-4 sm:px-6 py-10 max-w-6xl mx-auto space-y-6">
         {products.length === 0 && <p>No products found</p>}
 
         {products.map((product) => (
@@ -88,7 +88,7 @@ export default function MyProductsPage() {
                 <img
                   key={i}
                   src={img}
-                  className="w-32 h-32 object-cover rounded-lg"
+                  className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 object-cover rounded-lg flex-shrink-0"
                   alt={`${product.name} image ${i + 1}`}
                 />
               ))}
@@ -97,18 +97,22 @@ export default function MyProductsPage() {
             {/* RIGHT SIDE - DETAILS + ACTIONS */}
             <div className="flex-1 space-y-3 relative">
               {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                 <div>
                   <p className="text-sm text-gray-600">Product Name</p>
                   <p className="font-medium text-gray-900">{product.name}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Category</p>
-                  <p className="font-medium text-gray-900">{product.category}</p>
+                  <p className="font-medium text-gray-900">
+                    {product.category}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Company Name</p>
-                  <p className="font-medium text-gray-900">{product.companyName}</p>
+                  <p className="font-medium text-gray-900">
+                    {product.companyName}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Stock</p>
@@ -117,30 +121,37 @@ export default function MyProductsPage() {
               </div>
 
               {/* Pricing */}
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                 <div>
                   <p className="text-sm text-gray-600">Price</p>
-                  <p className="font-medium text-gray-900">₹{product.currentPrice}</p>
+                  <p className="font-medium text-gray-900">
+                    ₹{product.currentPrice}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Discount (%)</p>
-                  <p className="font-medium text-gray-900">{product.discount}</p>
+                  <p className="font-medium text-gray-900">
+                    {product.discount}
+                  </p>
                 </div>
               </div>
 
               {/* Attributes */}
-              {product.attributes && Object.keys(product.attributes).length > 0 && (
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Attributes</p>
-                  <ul className="list-disc list-inside text-gray-900">
-                    {Object.entries(product.attributes).map(([key, value]) => (
-                      <li key={key}>
-                        <span className="font-medium">{key}:</span> {value}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {product.attributes &&
+                Object.keys(product.attributes).length > 0 && (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Attributes</p>
+                    <ul className="list-disc list-inside text-gray-900">
+                      {Object.entries(product.attributes).map(
+                        ([key, value]) => (
+                          <li key={key}>
+                            <span className="font-medium">{key}:</span> {value}
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
 
               {/* Description */}
               <div>
@@ -149,7 +160,7 @@ export default function MyProductsPage() {
               </div>
 
               {/* ACTIONS */}
-              <div className="flex gap-3 mt-4">
+              <div className="flex flex-col sm:flex-row gap-3 mt-4">
                 <button
                   onClick={() => router.push(`/editProduct/${product._id}`)}
                   className="px-4 py-2 bg-indigo-600 text-white font-medium rounded hover:bg-indigo-700"

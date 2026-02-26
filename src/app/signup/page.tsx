@@ -28,9 +28,9 @@ export default function SignupPage() {
   const [message, setMessage] = useState("");
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
@@ -68,11 +68,10 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#eef2ff]">
-      <div className="flex w-[900px] rounded-3xl shadow-xl overflow-hidden bg-white">
-        
+    <div className="flex min-h-screen items-center justify-center bg-[#eef2ff] px-4">
+      <div className="flex flex-col sm:flex-row w-full max-w-4xl rounded-3xl shadow-xl overflow-hidden bg-white">
         {/* LEFT SIDE FORM */}
-        <div className="w-1/2 p-10">
+        <div className="w-full sm:w-1/2 p-8 sm:p-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h2>
           <p className="text-gray-500 mb-6">
             Create your account to get started
@@ -155,14 +154,12 @@ export default function SignupPage() {
         </div>
 
         {/* RIGHT SIDE DESIGN PANEL */}
-        <div className="w-1/2 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center">
+        <div className="w-full sm:w-1/2 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center py-10 sm:py-0">
           <div className="text-white text-center px-6">
-            <h3 className="text-2xl font-bold mb-3">
-              Your data, your rules
-            </h3>
+            <h3 className="text-2xl font-bold mb-3">Your data, your rules</h3>
             <p className="text-indigo-100 text-sm">
-              Secure. Fast. Reliable.  
-              Join us and manage everything in one place.
+              Secure. Fast. Reliable. Join us and manage everything in one
+              place.
             </p>
           </div>
         </div>

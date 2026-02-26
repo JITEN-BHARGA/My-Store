@@ -74,11 +74,11 @@ export default function SellerOrdersPage() {
                         isDelivered: true,
                         deliveryDate: new Date().toISOString(),
                       }
-                    : item
+                    : item,
                 ),
               }
-            : order
-        )
+            : order,
+        ),
       );
     }
   };
@@ -87,7 +87,7 @@ export default function SellerOrdersPage() {
     <div className="min-h-screen bg-gray-50 text-gray-800">
       <SellerNavbar />
 
-      <div className="px-6 py-8">
+      <div className="px-4 sm:px-6 md:px-8 py-8 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Seller Orders 📦</h1>
 
         {loading ? (
@@ -99,26 +99,21 @@ export default function SellerOrdersPage() {
             {orders.map((order) => {
               const total = order.items.reduce(
                 (sum, item) => sum + item.price * item.qty,
-                0
+                0,
               );
 
               return (
-                <div
-                  key={order._id}
-                  className="bg-white rounded-lg shadow p-4"
-                >
+                <div key={order._id} className="bg-white rounded-lg shadow p-4">
                   {/* Order Header */}
-                  <div className="flex flex-col md:flex-row md:justify-between mb-4">
-                    <div>
-                      <p className="font-semibold">
-                        Order ID: {order._id}
-                      </p>
+                  <div className="flex flex-col sm:flex-row sm:justify-between mb-4 gap-2 sm:gap-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                      <p className="font-semibold">Order ID: {order._id}</p>
                       <p className="text-sm text-gray-500">
                         {order.user?.name} • {order.user?.email}
                       </p>
                     </div>
 
-                    <p className="font-semibold mt-2 md:mt-0">
+                    <p className="font-semibold mt-2 sm:mt-0 text-right">
                       Total: ₹{total}
                     </p>
                   </div>
@@ -128,12 +123,12 @@ export default function SellerOrdersPage() {
                     {order.items.map((item) => (
                       <div
                         key={item.productId._id}
-                        className="flex items-center justify-between border rounded p-3"
+                        className="flex flex-col sm:flex-row sm:items-center justify-between border rounded p-3 gap-3 sm:gap-0"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-1">
                           <img
                             src={item.productId.imageURL[0]}
-                            className="w-12 h-12 object-contain"
+                            className="w-16 h-16 sm:w-12 sm:h-12 object-contain"
                           />
                           <div>
                             <p className="text-sm font-semibold">
@@ -145,10 +140,10 @@ export default function SellerOrdersPage() {
                           </div>
                         </div>
 
-                        <div className="text-right space-y-2">
+                        <div className="text-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
                           <span
                             className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(
-                              item.status
+                              item.status,
                             )}`}
                           >
                             {item.status}
@@ -157,10 +152,7 @@ export default function SellerOrdersPage() {
                           {!item.isDelivered && (
                             <button
                               onClick={() =>
-                                markAsDelivered(
-                                  order._id,
-                                  item.productId._id
-                                )
+                                markAsDelivered(order._id, item.productId._id)
                               }
                               className="block text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
                             >
@@ -179,8 +171,7 @@ export default function SellerOrdersPage() {
                   </div>
 
                   <p className="text-xs text-gray-400 mt-3">
-                    Order Date:{" "}
-                    {new Date(order.createdAt).toLocaleDateString()}
+                    Order Date: {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               );

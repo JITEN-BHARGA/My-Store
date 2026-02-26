@@ -5,44 +5,33 @@ import User from "@/module/user"
 
 export async function GET(request: NextRequest) {
   try {
-    // 🍪 Get token from cookie
     const token = request.cookies.get("token")?.value
 
     if (!token) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      )
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    // 🔐 Verify token
-    const decoded = tokenVerify(token) as { id: string }
+    const decoded = tokenVerify(token) as { id: string; role: string }
 
-    // 🗄️ Connect DB
+    if (!decoded?.id) {
+      return NextResponse.json({ message: "Invalid token" }, { status: 401 })
+    }
+
     await connectDB()
 
-    // 👤 Find user
-    const user = await User.findById(decoded.id).select(
-      "name username"
-    )
+    const user = await User.findById(decoded.id).select("name username")
 
     if (!user) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: "User not found" }, { status: 404 })
     }
 
-    // ✅ Return user
     return NextResponse.json({
       id: user._id,
       name: user.name,
       username: user.username,
+      role: decoded.role, // optional if you want to return role
     })
   } catch (error) {
-    return NextResponse.json(
-      { message: "Invalid token" },
-      { status: 401 }
-    )
+    return NextResponse.json({ message: "Invalid token" }, { status: 401 })
   }
 }
