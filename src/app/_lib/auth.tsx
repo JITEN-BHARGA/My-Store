@@ -9,7 +9,6 @@ export const getCurrentUser = async () => {
   try {
     const decoded = tokenVerify(token) as {
       id: string;
-      role: "customer" | "seller";
     };
 
     return decoded;

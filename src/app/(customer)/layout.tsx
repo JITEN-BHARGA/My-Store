@@ -10,9 +10,5 @@ export default async function CustomerLayout({
 
   if (!user) redirect("/login");
 
-  if (user.role !== "customer") {
-    redirect("/unauthorized");
-  }
-
   return <>{children}</>;
 }

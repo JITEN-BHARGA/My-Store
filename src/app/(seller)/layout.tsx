@@ -10,9 +10,6 @@ export default async function SellerLayout({
 
   if (!user) redirect("/login");
 
-  if (user.role !== "seller") {
-    redirect("/unauthorized");
-  }
 
   return <>{children}</>;
 }

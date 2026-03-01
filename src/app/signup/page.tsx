@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-type role = "customer" | "seller";
-
 type SignupForm = {
   name: string;
   userName: string;
   email: string;
   password: string;
-  role: role;
 };
 
 export default function SignupPage() {
@@ -20,8 +17,7 @@ export default function SignupPage() {
     name: "",
     userName: "",
     email: "",
-    password: "",
-    role: "customer",
+    password: ""
   });
 
   const [loading, setLoading] = useState(false);
@@ -107,16 +103,6 @@ export default function SignupPage() {
               className="w-full p-3 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
             />
-
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="customer">Customer</option>
-              <option value="seller">Seller</option>
-            </select>
 
             <input
               type="password"

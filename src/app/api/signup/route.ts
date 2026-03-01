@@ -11,7 +11,6 @@ type Signup = {
   email: string;
   name: string;
   userName: string;
-  role: "customer" | "seller";
   password: string;
 };
 
@@ -22,7 +21,6 @@ export async function POST(request: NextRequest) {
     const data: Signup = await request.json();
     if (
       !data.email ||
-      !data.role ||
       !data.name ||
       !data.userName ||
       !data.password
@@ -34,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email: data.email }, { userName: data.userName }],
+      $or: [{ email: data.email }],
     });
 
     if (existingUser) {
@@ -55,7 +53,6 @@ export async function POST(request: NextRequest) {
       name: data.name,
       userName: data.userName,
       email: data.email,
-      role: data.role,
       password: hashPassword,
       verifyToken,
       verifyTokenExpiry,

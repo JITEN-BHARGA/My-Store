@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 type LoginForm = {
   email: string;
   password: string;
-  role: "customer" | "seller";
 };
 
 export default function LoginPage() {
@@ -17,7 +16,6 @@ export default function LoginPage() {
   const [form, setForm] = useState<LoginForm>({
     email: "",
     password: "",
-    role: "customer", // default role
   });
 
   const [loading, setLoading] = useState(false);
@@ -26,6 +24,7 @@ export default function LoginPage() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotMsg, setForgotMsg] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [customer , setCustomer] = useState(true);
 
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +82,7 @@ export default function LoginPage() {
         setMessage("Login successful 🎉 Redirecting...");
 
         setTimeout(() => {
-          if (form.role === "seller") router.push("/dashboard");
+          if (customer === false) router.push("/dashboard");
           else router.push("/");
         }, 1000);
       }
@@ -132,8 +131,7 @@ export default function LoginPage() {
                   type="radio"
                   name="role"
                   value="customer"
-                  checked={form.role === "customer"}
-                  onChange={handleChange}
+                  onClick={() => setCustomer(true)}
                   className="w-4 h-4"
                 />
                 <span className="text-gray-700">Customer</span>
@@ -144,8 +142,7 @@ export default function LoginPage() {
                   type="radio"
                   name="role"
                   value="seller"
-                  checked={form.role === "seller"}
-                  onChange={handleChange}
+                  onClick={() => setCustomer(false)}
                   className="w-4 h-4"
                 />
                 <span className="text-gray-700">Seller</span>

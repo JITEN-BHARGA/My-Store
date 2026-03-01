@@ -18,15 +18,19 @@ export default function ProductCard({ product, isLoggedIn }: Props) {
       return;
     }
 
-    await fetch("/api/cart/add", {
+    console.log("Adding to cart:", product._id);
+
+    const res = await fetch("/api/cart/add", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ productId: product._id }),
+      body: JSON.stringify({ productId: product._id, action: "add" }),
     });
 
-    alert("Added to cart ✅");
+    if(res.ok)alert("Added to cart ✅");
+    else alert("Failed to add to cart");
   };
 
   const toggleWishlist = async () => {

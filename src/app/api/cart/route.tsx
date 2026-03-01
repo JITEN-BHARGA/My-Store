@@ -4,7 +4,7 @@ import Cart from "@/module/cartItem"
 import "@/module/product"
 import { getUserIdFromToken } from "@/app/_lib/getUser"
 
-export async function GET(req : NextRequest) {
+export async function GET(req: NextRequest) {
   await connectDB()
 
   const userId = await getUserIdFromToken(req)
@@ -13,51 +13,71 @@ export async function GET(req : NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
 
-  const cart = await Cart.find({ userId }).populate("productId")
-  
-  return NextResponse.json({ cart })
+  const cart = await Cart.findOne({ userId }).populate({
+    path: "products.productId",
+    select: "name companyName finalPrice imageURL",
+  })
+
+  return NextResponse.json({
+    cart: cart || { products: [] },
+  })
 }
 
-export async function PATCH(req: Request) {
+export async function PATCH(req: NextRequest) {
   try {
     await connectDB()
 
-    const { cartItemId, action } = await req.json()
+    const userId = await getUserIdFromToken(req)
 
-    if (!cartItemId || !action) {
+    if (!userId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+    }
+
+    const { productId, action } = await req.json()
+
+    if (!productId || !action) {
       return NextResponse.json(
         { message: "Missing fields" },
         { status: 400 }
       )
     }
 
-    const cartItem = await Cart.findById(cartItemId)
+    const cart = await Cart.findOne({ userId })
 
-    if (!cartItem) {
-      return NextResponse.json(
-        { message: "Cart item not found" },
-        { status: 404 }
-      )
+    if (!cart) {
+      return NextResponse.json({ cart: { products: [] } })
+    }
+
+    const productIndex = cart.products.findIndex(
+      (item: any) => item.productId.toString() === productId
+    )
+
+    if (productIndex === -1) {
+      return NextResponse.json({ cart })
     }
 
     if (action === "increase") {
-      cartItem.qty += 1
-      await cartItem.save()
+      cart.products[productIndex].qty += 1
     }
 
     if (action === "decrease") {
-      if (cartItem.qty > 1) {
-        cartItem.qty -= 1
-        await cartItem.save()
+      cart.products[productIndex].qty -= 1
+
+      if (cart.products[productIndex].qty <= 0) {
+        cart.products.splice(productIndex, 1)
       }
     }
 
     if (action === "remove") {
-      await Cart.findByIdAndDelete(cartItemId)
+      cart.products.splice(productIndex, 1)
     }
 
-    const updatedCart = await Cart.find({ userId: cartItem.userId })
-      .populate("productId")
+    await cart.save()
+
+    const updatedCart = await Cart.findOne({ userId }).populate({
+      path: "products.productId",
+      select: "name companyName finalPrice imageURL",
+    })
 
     return NextResponse.json({ cart: updatedCart })
   } catch (error) {

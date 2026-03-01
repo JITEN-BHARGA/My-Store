@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
 
 interface CartItem {
-  _id: string;
+  _id: string; // productId._id
   name: string;
   brand: string;
   price: number;
@@ -17,9 +17,7 @@ export default function CartPage() {
   const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [appliedCouponCode, setAppliedCouponCode] = useState("");
 
   useEffect(() => {
     fetchCart();
@@ -33,8 +31,9 @@ export default function CartPage() {
 
   const formatCart = (items: any[]): CartItem[] => {
     if (!Array.isArray(items)) return [];
+
     return items.map((item: any) => ({
-      _id: item._id,
+      _id: item.productId?._id, // ✅ IMPORTANT FIX
       name: item.productId?.name || "Product",
       brand: item.productId?.companyName || "",
       price: item.productId?.finalPrice || 0,
@@ -48,7 +47,9 @@ export default function CartPage() {
       const res = await fetch("/api/cart", { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setCart(formatCart(data?.cart));
+
+      // backend should return cart.products
+      setCart(formatCart(data?.cart?.products));
     } catch (err) {
       setCart([]);
     } finally {
@@ -56,35 +57,10 @@ export default function CartPage() {
     }
   };
 
-  // NEW: Validate coupon against Database
-  const applyCoupon = async () => {
-    try {
-      const res = await fetch("/api/coupon/validate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: coupon, subtotal }),
-      });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setDiscount(data.discountAmount);
-        setAppliedCouponCode(data.code);
-        alert("Coupon Applied Successfully!");
-      } else {
-        alert(data.message);
-        setDiscount(0);
-        setAppliedCouponCode("");
-      }
-    } catch (err) {
-      alert("Error applying coupon");
-    }
-  };
-
-  // NEW: Place order and save everything to Database
   const handlePlaceOrder = async () => {
     try {
-      const res = await fetch("/api/order", {
+      await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -92,7 +68,6 @@ export default function CartPage() {
           subtotal,
           discount,
           total: finalTotal,
-          couponCode: appliedCouponCode,
         }),
       });
 
@@ -103,20 +78,22 @@ export default function CartPage() {
   };
 
   const updateQty = async (
-    cartItemId: string,
-    type: "increase" | "decrease" | "remove",
+    productId: string, // ✅ now sending productId
+    type: "increase" | "decrease" | "remove"
   ) => {
     try {
       const res = await fetch("/api/cart", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ cartItemId, action: type }),
+        body: JSON.stringify({ productId, action: type }), // ✅ FIXED
       });
+
       const data = await res.json();
+
       if (res.ok) {
-        setCart(formatCart(data?.cart));
-        setDiscount(0); // Reset discount if cart changes
+        setCart(formatCart(data?.cart?.products));
+        setDiscount(0);
       }
     } catch (err) {}
   };
@@ -183,33 +160,11 @@ export default function CartPage() {
           <div className="bg-white p-6 rounded-xl shadow-sm max-w-md w-full ml-auto">
             <h3 className="font-bold mb-4 text-gray-900">Price Details</h3>
 
-            <h3 className="font-bold text-sm mb-2">Apply Coupon</h3>
-            <div className="flex flex-col sm:flex-row gap-2 mb-4">
-              <input
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
-                className="border p-2 flex-1"
-                placeholder="Enter coupon"
-              />
-              <button
-                onClick={applyCoupon}
-                className="bg-black text-white px-3 py-2 sm:py-0"
-              >
-                Apply
-              </button>
-            </div>
-
             <div className="flex justify-between text-gray-700">
               <span>Subtotal</span>
               <span>₹{formatPrice(subtotal)}</span>
             </div>
 
-            {discount > 0 && (
-              <div className="flex justify-between text-green-600 mt-1">
-                <span>Discount ({appliedCouponCode})</span>
-                <span>- ₹{formatPrice(discount)}</span>
-              </div>
-            )}
 
             <div className="flex justify-between font-bold mt-3 text-gray-900 border-t pt-3">
               <span>Total</span>

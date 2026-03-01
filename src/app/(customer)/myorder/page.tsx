@@ -154,9 +154,12 @@ export default function MyOrdersPage() {
               key={order._id}
               className="bg-white rounded-lg shadow-sm border p-5"
             >
-              <p className="px-2 py-2 text-sm font-semibold mb-4">
-                Order ID: {order._id}
-              </p>
+              <div className="flex justify-between items-center px-2 py-2 mb-4">
+                <p className="text-sm font-semibold">Order ID: {order._id}</p>
+                <p className="text-sm font-bold text-green-600">
+                  ₹{order.total}
+                </p>
+              </div>
 
               {order.items.map((item) => {
                 const isDelivered = item.isDelivered;

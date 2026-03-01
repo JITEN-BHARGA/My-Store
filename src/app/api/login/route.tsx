@@ -8,7 +8,6 @@ import { jwtGeneration } from "@/app/_lib/jwt"
 
 type Login = {
     email : string
-    role : string
     password : string
 }
 
@@ -18,7 +17,7 @@ export async function POST(request : NextRequest){
 
         const data : Login = await request.json()
 
-        if(!data.email || !data.password || !data.role){
+        if(!data.email || !data.password){
             return NextResponse.json({
                 message : "some field are missing...",
                 success : false
@@ -27,7 +26,7 @@ export async function POST(request : NextRequest){
             })
         }
 
-        const existUser = await User.findOne({$and : [{email : data.email, role : data.role, isVerified : true}]})
+        const existUser = await User.findOne({$and : [{email : data.email, isVerified : true}]})
 
         if(!existUser){
             return NextResponse.json({
@@ -47,7 +46,7 @@ export async function POST(request : NextRequest){
             })
         }
 
-        const token = jwtGeneration(existUser._id.toString() , existUser.role);
+        const token = jwtGeneration(existUser._id.toString());
 
 
 

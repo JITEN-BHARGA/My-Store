@@ -36,10 +36,10 @@ export default function AdminNavbar() {
             Users
           </button>
           <button
-            onClick={() => router.push("/admin/sellers")}
+            onClick={() => router.push("/admin/coupons")}
             className="hover:text-indigo-600 transition"
           >
-            Sellers
+            coupons
           </button>
           <button
             onClick={() => router.push("/admin/products")}

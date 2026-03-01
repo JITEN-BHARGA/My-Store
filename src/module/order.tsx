@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
 
     items: [
       {
@@ -35,11 +39,17 @@ const orderSchema = new mongoose.Schema(
     discount: { type: Number, default: 0 },
     couponCode: { type: String, uppercase: true, default: "" },
     total: { type: Number, required: true },
+    paymentMethod: { type: String, required: true },
+    razorpayOrderId: String,
+    razorpayPaymentId: String,
+    razorpaySignature: String,
+    isPaid: { type: Boolean, default: false },
+    paidAt: Date,
 
     // 🔽 overall order status (auto calculated)
     status: { type: String, default: "Placed" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.models.Order || mongoose.model("Order", orderSchema);

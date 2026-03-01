@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const decoded = tokenVerify(token) as { id: string; role: string }
+    const decoded = tokenVerify(token) as { id: string}
 
     if (!decoded?.id) {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 })
@@ -19,17 +19,16 @@ export async function GET(request: NextRequest) {
 
     await connectDB()
 
-    const user = await User.findById(decoded.id).select("name username")
+    const user = await User.findById(decoded.id).select("name userName")
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 })
-    }
+    } 
 
     return NextResponse.json({
       id: user._id,
       name: user.name,
-      username: user.username,
-      role: decoded.role, // optional if you want to return role
+      username: user.userName,
     })
   } catch (error) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 })
