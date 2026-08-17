@@ -3,20 +3,7 @@ import Product from "@/module/product";
 import { connectDB } from "@/app/_lib/databaseConnection";
 import { getUserIdFromToken } from "@/app/_lib/getUser";
 
-enum Catagory {
-  "Electronics",
-  "Fashion",
-  "Home & Kitchen",
-  "Beauty",
-  "Sports",
-  "Books",
-  "Toys",
-  "Groceries",
-  "Mobiles",
-  "Accessories",
-}
-
-// ➕ CREATE PRODUCT
+// ➕ CREATE PRODUCT (sellers only)
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
@@ -27,6 +14,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { message: "Unauthorized" },
         { status: 401 }
+      );
+    }
+
+    if (sellerId.role !== "seller") {
+      return NextResponse.json(
+        { message: "Forbidden: sellers only" },
+        { status: 403 }
       );
     }
 
@@ -63,7 +57,7 @@ export async function POST(req: NextRequest) {
       itemInfo,
       category,
       companyName,
-      sellerId,
+      sellerId: sellerId._id,
       attributes,
       stock,
     });
@@ -84,12 +78,16 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    const sellerId = getUserIdFromToken(req);
+    const sellerId = await getUserIdFromToken(req);
 
     const { searchParams } = new URL(req.url);
     const mine = searchParams.get("mine");
 
-    const query = mine ? { sellerId } : {};
+    if (mine && !sellerId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const query = mine ? { sellerId: sellerId!._id } : {};
 
     const products = await Product.find(query).sort({
       createdAt: -1,

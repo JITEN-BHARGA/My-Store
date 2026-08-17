@@ -42,7 +42,6 @@ export default function CheckoutPage() {
 
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [finalTotal, setFinalTotal] = useState(0);
   const [couponLoading, setCouponLoading] = useState(false);
 
   // 🆕 payment states
@@ -97,8 +96,8 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Display total is derived inline as cartTotal - discount.
     setDiscount(data.discountAmount);
-    setFinalTotal(data.finalTotal);
   };
 
   const fetchCartTotal = async () => {
@@ -179,14 +178,13 @@ export default function CheckoutPage() {
   const placeOrder = async () => {
     if (!selectedAddress) return alert("Please select an address");
 
+    // 🔒 Server owns money math — only send addressId + coupon code.
     const res = await fetch("/api/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         addressId: selectedAddress,
-        subtotal: cartTotal,
-        discount,
-        total: cartTotal - discount,
+        couponCode,
       }),
     });
 
@@ -202,15 +200,13 @@ export default function CheckoutPage() {
   const handleCOD = async () => {
     if (!orderId) return;
 
+    // 🔒 Server recomputes the amount from the stored order.
     const res = await fetch(`/api/order/${orderId}/cod`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        cartTotal,
-        discount,
-      }),
+      body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -229,14 +225,11 @@ export default function CheckoutPage() {
 
     setPaymentLoading(true);
 
+    // 🔒 Server recomputes the amount from the stored order.
     const res = await fetch("/api/razorpay/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        orderId,
-        discount,
-        amount: cartTotal - discount,
-      }),
+      body: JSON.stringify({ orderId }),
     });
 
     const data = await res.json();
@@ -293,13 +286,16 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 pb-10">
+    <div className="min-h-screen text-gray-800 pb-10">
       <Navbar />
 
-      <div className="max-w-[600px] w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+      <div className="max-w-[640px] w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+        <h1 className="text-3xl font-black text-gray-900 mt-2">
+          Secure <span className="text-gradient">Checkout</span>
+        </h1>
         {/* PRICE DETAILS */}
-        <section className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border space-y-4">
-          <h2 className="text-2xl font-bold">1. Price Details</h2>
+        <section className="glass p-5 sm:p-6 rounded-2xl elev-2 space-y-4 animate-fade-up">
+          <h2 className="text-xl font-bold text-gray-900">1. Price Details</h2>
 
           <div className="flex justify-between">
             <span>Items Subtotal</span>
@@ -312,12 +308,12 @@ export default function CheckoutPage() {
               value={couponCode}
               onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
               placeholder="Enter coupon code"
-              className="border px-3 py-2 rounded w-full text-sm"
+              className="input text-sm"
             />
             <button
               onClick={applyCoupon}
               disabled={couponLoading}
-              className="bg-indigo-600 text-white px-4 rounded text-sm font-bold"
+              className="bg-gradient-to-br from-indigo-500 to-violet-600 text-white px-5 rounded-xl text-sm font-bold shadow-[0_8px_18px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 transition-transform disabled:opacity-60"
             >
               {couponLoading ? "..." : "Apply"}
             </button>
@@ -333,9 +329,11 @@ export default function CheckoutPage() {
             <span className="text-green-600 font-bold">FREE</span>
           </div>
 
-          <div className="border-t pt-4 flex justify-between">
+          <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
             <span className="text-lg font-bold">Total Amount</span>
-            <span className="text-2xl font-black">₹{cartTotal - discount}</span>
+            <span className="text-3xl font-black text-gradient">
+              ₹{cartTotal - discount}
+            </span>
           </div>
 
           {/* ✅ BUY / PAYMENT BUTTONS */}
@@ -343,7 +341,7 @@ export default function CheckoutPage() {
             <button
               onClick={placeOrder}
               disabled={!selectedAddress}
-              className="w-full bg-indigo-600 text-white py-4 rounded-xl font-extrabold text-lg hover:bg-indigo-700 disabled:bg-gray-400"
+              className="sheen w-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white py-4 rounded-2xl font-extrabold text-lg shadow-[0_14px_30px_rgba(79,70,229,0.4)] hover:-translate-y-0.5 transition-transform disabled:from-gray-400 disabled:to-gray-400 disabled:shadow-none disabled:translate-y-0"
             >
               Buy Now
             </button>
@@ -352,14 +350,14 @@ export default function CheckoutPage() {
               <button
                 onClick={handleRazorpay}
                 disabled={paymentLoading}
-                className="w-full bg-green-600 text-white py-4 rounded-xl font-bold hover:bg-green-700"
+                className="w-full bg-gradient-to-br from-emerald-500 to-green-600 text-white py-4 rounded-2xl font-bold shadow-[0_12px_28px_rgba(16,185,129,0.35)] hover:-translate-y-0.5 transition-transform disabled:opacity-70"
               >
                 {paymentLoading ? "Processing..." : "Pay Now"}
               </button>
 
               <button
                 onClick={handleCOD}
-                className="w-full border-2 border-gray-300 py-4 rounded-xl font-bold hover:border-indigo-400"
+                className="w-full border-2 border-gray-300 bg-white py-4 rounded-2xl font-bold hover:border-indigo-400 transition"
               >
                 Cash on Delivery
               </button>
@@ -367,8 +365,8 @@ export default function CheckoutPage() {
           )}
         </section>
 
-        <section className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">
+        <section className="glass p-5 sm:p-6 rounded-2xl elev-2 space-y-4 animate-fade-up">
+          <h2 className="text-xl font-bold text-gray-900">
             2. Shipping Address
           </h2>
 

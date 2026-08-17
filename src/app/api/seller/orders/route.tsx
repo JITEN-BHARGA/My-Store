@@ -9,14 +9,18 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    const sellerId = await getUserIdFromToken(req);
+    const seller = await getUserIdFromToken(req);
 
-    if (!sellerId) {
+    if (!seller) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    if (seller.role !== "seller") {
+      return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 });
+    }
+
     // ✅ Get seller products
-    const sellerProducts = await Product.find({ sellerId }).select("_id");
+    const sellerProducts = await Product.find({ sellerId: seller._id }).select("_id");
     const productIds = sellerProducts.map((p) => p._id);
 
     if (productIds.length === 0) {
@@ -69,6 +73,10 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
+    if (seller!.role !== "seller") {
+      return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 });
+    }
+
     const { orderId, productId } = await req.json();
 
     if (
@@ -91,8 +99,8 @@ export async function PATCH(req: NextRequest) {
     const item = order.items.find((i: any) => {
       if (!i.productId) return false;
 
-      const sellerIdStr = typeof i.productId.sellerId === 'string' 
-        ? i.productId.sellerId 
+      const sellerIdStr = typeof i.productId.sellerId === 'string'
+        ? i.productId.sellerId
         : i.productId.sellerId._id;
 
       const sellerIdValue = typeof sellerIdStr === 'string' ? sellerIdStr : sellerIdStr.toString();

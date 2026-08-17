@@ -88,14 +88,14 @@ function SearchContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="min-h-screen text-gray-800">
       <Navbar />
 
-      <div className="px-4 sm:px-6 py-10 grid grid-cols-12 gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-12 gap-6">
         {/* 🔹 LEFT SIDEBAR FILTER */}
         <div className="col-span-12 md:col-span-3">
-          <div className="sticky top-20 md:top-24 bg-white p-4 rounded-lg shadow w-full">
-            <h3 className="font-bold text-lg mb-4">Filters</h3>
+          <div className="sticky top-28 glass p-5 rounded-2xl elev-2 w-full">
+            <h3 className="font-bold text-lg mb-4 text-gray-900">Filters</h3>
 
             {/* BRAND */}
             <div className="mb-4">
@@ -193,11 +193,26 @@ function SearchContent() {
         {/* 🔹 PRODUCT GRID */}
         <div className="col-span-12 md:col-span-9">
           {loading ? (
-            <p>Loading...</p>
-          ) : products.length === 0 ? (
-            <p>No products found</p>
-          ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl p-4 bg-white/80 border border-white/70 elev-1">
+                  <div className="skeleton w-full h-56 rounded-xl" />
+                  <div className="skeleton h-4 w-3/4 rounded mt-4" />
+                  <div className="skeleton h-4 w-1/2 rounded mt-2" />
+                  <div className="skeleton h-9 w-full rounded-xl mt-4" />
+                </div>
+              ))}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-24 rounded-3xl glass elev-2">
+              <div className="text-6xl mb-4 animate-float">🔍</div>
+              <p className="text-xl font-bold text-gray-800">No products found</p>
+              <p className="text-gray-500 mt-1">
+                Try adjusting your filters or search term.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 perspective-1500">
               {products.map((item, i) => (
                 <ProductCard key={i} product={item} isLoggedIn={isLoggedIn} />
               ))}

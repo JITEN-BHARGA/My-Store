@@ -99,86 +99,121 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 py-10 space-y-6">
-        <h2 className="text-2xl font-bold text-indigo-600">My Cart</h2>
+      <div className="max-w-5xl mx-auto px-4 py-10 space-y-6">
+        <h2 className="text-3xl font-black text-gray-900">
+          My <span className="text-gradient">Cart</span>
+        </h2>
 
-        {loading && <p className="text-gray-600">Loading cart...</p>}
+        {loading && (
+          <div className="space-y-4">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="skeleton h-28 rounded-2xl" />
+            ))}
+          </div>
+        )}
+
         {!loading && cart.length === 0 && (
-          <p className="text-gray-600">Your cart is empty</p>
+          <div className="text-center py-20 rounded-3xl glass elev-2 animate-fade-up">
+            <div className="text-6xl mb-4 animate-float">🛒</div>
+            <p className="text-xl font-bold text-gray-800">Your cart is empty</p>
+            <p className="text-gray-500 mt-1">
+              Browse our featured deals and add something you love.
+            </p>
+            <button
+              onClick={() => router.push("/")}
+              className="sheen mt-6 px-6 py-3 rounded-2xl text-white font-semibold bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_12px_28px_rgba(79,70,229,0.35)] hover:-translate-y-0.5 transition-transform"
+            >
+              Continue Shopping →
+            </button>
+          </div>
         )}
 
-        {cart.map((item) => (
-          <div
-            key={item._id}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-xl shadow-sm"
-          >
-            <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-20 h-20 rounded object-cover flex-shrink-0"
-              />
-              <div className="text-center sm:text-left">
-                <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                <p className="text-gray-500 text-sm">{item.brand}</p>
-                <p className="font-bold text-gray-800">
-                  ₹{formatPrice(item.price)}
-                </p>
+        <div className="grid lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-2 space-y-4 perspective-1500">
+            {cart.map((item) => (
+              <div
+                key={item._id}
+                className="lift flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/85 border border-white/70 p-4 rounded-2xl elev-2 animate-fade-up"
+              >
+                <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                  <div className="w-24 h-24 rounded-xl bg-gradient-to-b from-gray-50 to-gray-100 grid place-items-center flex-shrink-0 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="text-center sm:text-left">
+                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                    <p className="text-gray-500 text-sm">{item.brand}</p>
+                    <p className="font-extrabold text-lg text-gray-900 mt-1">
+                      ₹{formatPrice(item.price)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 rounded-xl bg-white border border-gray-200 p-1 elev-1">
+                    <button
+                      disabled={item.qty <= 1}
+                      onClick={() => updateQty(item._id, "decrease")}
+                      className="w-9 h-9 rounded-lg text-gray-800 hover:bg-indigo-50 disabled:opacity-40 transition"
+                    >
+                      −
+                    </button>
+                    <span className="text-gray-900 font-semibold w-6 text-center">
+                      {item.qty}
+                    </span>
+                    <button
+                      onClick={() => updateQty(item._id, "increase")}
+                      className="w-9 h-9 rounded-lg text-gray-800 hover:bg-indigo-50 transition"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => updateQty(item._id, "remove")}
+                    className="text-rose-500 hover:text-rose-600 text-sm font-medium hover:scale-110 transition-transform"
+                    aria-label="Remove item"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-center gap-3 mt-3 sm:mt-0">
-              <button
-                disabled={item.qty <= 1}
-                onClick={() => updateQty(item._id, "decrease")}
-                className="border px-3 py-1 rounded text-gray-800 hover:bg-gray-100 disabled:opacity-40"
-              >
-                −
-              </button>
-              <span className="text-gray-900 font-medium">{item.qty}</span>
-              <button
-                onClick={() => updateQty(item._id, "increase")}
-                className="border px-3 py-1 rounded text-gray-800 hover:bg-gray-100"
-              >
-                +
-              </button>
-            </div>
-
-            <button
-              onClick={() => updateQty(item._id, "remove")}
-              className="text-red-500 hover:text-red-600 text-sm font-medium mt-3 sm:mt-0"
-            >
-              Remove
-            </button>
+            ))}
           </div>
-        ))}
 
-        {cart.length > 0 && (
-          <div className="bg-white p-6 rounded-xl shadow-sm max-w-md w-full ml-auto">
-            <h3 className="font-bold mb-4 text-gray-900">Price Details</h3>
+          {cart.length > 0 && (
+            <div className="glass p-6 rounded-2xl elev-3 lg:sticky lg:top-28 animate-fade-up">
+              <h3 className="font-bold mb-4 text-gray-900 text-lg">
+                Price Details
+              </h3>
 
-            <div className="flex justify-between text-gray-700">
-              <span>Subtotal</span>
-              <span>₹{formatPrice(subtotal)}</span>
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span className="font-medium text-gray-800">
+                  ₹{formatPrice(subtotal)}
+                </span>
+              </div>
+
+              <div className="flex justify-between font-black text-xl mt-4 text-gray-900 border-t border-gray-200 pt-4">
+                <span>Total</span>
+                <span className="text-gradient">₹{formatPrice(finalTotal)}</span>
+              </div>
+
+              <button
+                onClick={handlePlaceOrder}
+                className="sheen mt-6 w-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white py-3.5 rounded-2xl font-bold shadow-[0_14px_30px_rgba(79,70,229,0.4)] hover:-translate-y-0.5 transition-transform"
+              >
+                Place Order →
+              </button>
             </div>
-
-
-            <div className="flex justify-between font-bold mt-3 text-gray-900 border-t pt-3">
-              <span>Total</span>
-              <span>₹{formatPrice(finalTotal)}</span>
-            </div>
-
-            <button
-              onClick={handlePlaceOrder}
-              className="mt-5 w-full bg-indigo-600 text-white py-2 rounded-lg hover:opacity-90 transition"
-            >
-              Place Order
-            </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

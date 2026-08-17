@@ -18,6 +18,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Enforce password strength server-side (schema minlength is bypassed by updateOne).
+    if (typeof password !== "string" || password.length < 6) {
+      return NextResponse.json(
+        { message: "Password must be at least 6 characters" },
+        { status: 400 }
+      );
+    }
+
     const resetToken = await PasswordResetToken.findOne({ token });
 
     if (!resetToken) {

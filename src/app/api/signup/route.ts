@@ -12,6 +12,7 @@ type Signup = {
   name: string;
   userName: string;
   password: string;
+  role?: string;
 };
 
 export async function POST(request: NextRequest) {
@@ -30,6 +31,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    const role = data.role === "seller" ? "seller" : "customer";
 
     const existingUser = await User.findOne({
       $or: [{ email: data.email }],
@@ -54,6 +57,7 @@ export async function POST(request: NextRequest) {
       userName: data.userName,
       email: data.email,
       password: hashPassword,
+      role,
       verifyToken,
       verifyTokenExpiry,
       isVerified: false,

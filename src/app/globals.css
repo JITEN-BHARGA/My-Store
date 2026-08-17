@@ -1,26 +1,251 @@
 @import "tailwindcss";
 
+/* ============================================================
+   MyStore — Premium 3D Design System
+   Pure-CSS depth, perspective, glass & motion primitives.
+   GPU-friendly (transform/opacity only). Respects reduced motion.
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --brand-50: #eef2ff;
+  --brand-100: #e0e7ff;
+  --brand-200: #c7d2fe;
+  --brand-400: #818cf8;
+  --brand-500: #6366f1;
+  --brand-600: #4f46e5;
+  --brand-700: #4338ca;
+  --accent-400: #a78bfa;
+  --accent-500: #8b5cf6;
+
+  /* Surfaces */
+  --background: #f6f7fb;
+  --foreground: #171821;
+  --surface: #ffffff;
+  --surface-muted: #f2f3f9;
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 16px;
+
+  /* Elevation — soft, layered shadows for depth */
+  --shadow-1: 0 1px 2px rgba(24, 26, 40, 0.05), 0 2px 6px rgba(24, 26, 40, 0.05);
+  --shadow-2: 0 4px 10px rgba(24, 26, 40, 0.06), 0 8px 24px rgba(24, 26, 40, 0.08);
+  --shadow-3: 0 10px 24px rgba(24, 26, 40, 0.08), 0 20px 48px rgba(24, 26, 40, 0.12);
+  --shadow-4: 0 20px 45px rgba(49, 46, 129, 0.18), 0 40px 90px rgba(24, 26, 40, 0.16);
+  --shadow-brand: 0 12px 30px rgba(79, 70, 229, 0.35);
+  --ring-brand: 0 0 0 3px rgba(99, 102, 241, 0.35);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Subtle ambient light — depth cue behind everything */
+  background-image:
+    radial-gradient(1200px 600px at 12% -10%, rgba(99, 102, 241, 0.10), transparent 60%),
+    radial-gradient(1000px 500px at 100% 0%, rgba(139, 92, 246, 0.08), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* ============================================================
+   3D PRIMITIVES  (compose with Tailwind)
+   ============================================================ */
+@layer utilities {
+  .perspective-1000 { perspective: 1000px; }
+  .perspective-1500 { perspective: 1500px; }
+  .perspective-2000 { perspective: 2000px; }
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+
+  /* Depth translation on the Z axis (parent needs preserve-3d) */
+  .translate-z-2 { transform: translateZ(20px); }
+  .translate-z-4 { transform: translateZ(40px); }
+  .translate-z-6 { transform: translateZ(60px); }
+
+  /* Glass surface */
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+    border: 1px solid var(--glass-border);
+  }
+  .glass-dark {
+    background: rgba(17, 18, 34, 0.55);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Elevation helpers */
+  .elev-1 { box-shadow: var(--shadow-1); }
+  .elev-2 { box-shadow: var(--shadow-2); }
+  .elev-3 { box-shadow: var(--shadow-3); }
+  .elev-4 { box-shadow: var(--shadow-4); }
+  .elev-brand { box-shadow: var(--shadow-brand); }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(120deg, var(--brand-600), var(--accent-500) 60%, var(--brand-400));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Sheen sweep used on premium CTAs / cards */
+  .sheen { position: relative; overflow: hidden; }
+  .sheen::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.55),
+      transparent
+    );
+    transform: skewX(-18deg);
+    transition: left 0.7s ease;
+    pointer-events: none;
+  }
+  .sheen:hover::after { left: 160%; }
+
+  /* Hover lift — depth on interaction */
+  .lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .lift:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-3);
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Premium form input (used by checkout & forms) */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.85rem;
+  background: #ffffff;
+  border: 1px solid #e3e6f0;
+  color: #171821;
+  box-shadow: inset 0 1px 2px rgba(24, 26, 40, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.input::placeholder { color: #9aa0b4; }
+.input:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+}
+
+/* ============================================================
+   KEYFRAMES  (subtle, GPU-friendly)
+   ============================================================ */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes float-y-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-22px); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translate3d(0, 24px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes aurora {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(3%, -3%, 0) rotate(4deg); }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+}
+
+.animate-float { animation: float-y 6s ease-in-out infinite; }
+.animate-float-slow { animation: float-y-slow 9s ease-in-out infinite; }
+.animate-fade-up { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-in { animation: fade-in 0.6s ease both; }
+.animate-pop { animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-aurora { animation: aurora 18s ease-in-out infinite; }
+
+/* Scroll-reveal: elements start hidden, .is-visible reveals them */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-muted) 25%,
+    #e9ebf5 37%,
+    var(--surface-muted) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* ============================================================
+   ACCESSIBILITY — honour reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .animate-float,
+  .animate-float-slow,
+  .animate-aurora { animation: none !important; }
+}
+
+/* Nicer focus ring for keyboard users */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: none;
+  box-shadow: var(--ring-brand);
+  border-radius: 0.5rem;
 }

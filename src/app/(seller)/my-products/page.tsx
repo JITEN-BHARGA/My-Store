@@ -60,12 +60,16 @@ export default function MyProductsPage() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="min-h-screen text-gray-800">
       <SellerNavbar />
 
-      <section className="bg-indigo-600 text-white py-16 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold leading-tight">
+      <section className="relative overflow-hidden text-white py-16 px-6 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-16 -left-10 w-72 h-72 rounded-full bg-white/20 blur-3xl animate-float"
+        />
+        <div className="relative max-w-6xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-black leading-tight">
             Your Products
           </h2>
           <p className="mt-3 text-lg text-indigo-100 max-w-2xl mx-auto">
@@ -75,20 +79,31 @@ export default function MyProductsPage() {
       </section>
 
       <section className="px-4 sm:px-6 py-10 max-w-6xl mx-auto space-y-6">
-        {products.length === 0 && <p>No products found</p>}
+        {products.length === 0 && (
+          <div className="text-center py-20 rounded-3xl glass elev-2">
+            <div className="text-6xl mb-4 animate-float">📦</div>
+            <p className="text-xl font-bold text-gray-800">No products found</p>
+            <button
+              onClick={() => router.push("/seller")}
+              className="sheen mt-6 px-6 py-3 rounded-2xl text-white font-semibold bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_12px_28px_rgba(79,70,229,0.35)] hover:-translate-y-0.5 transition-transform"
+            >
+              + Add Product
+            </button>
+          </div>
+        )}
 
         {products.map((product) => (
           <div
             key={product._id}
-            className="flex flex-col lg:flex-row bg-white rounded-xl shadow p-6 gap-6"
+            className="lift flex flex-col lg:flex-row bg-white/85 border border-white/70 rounded-2xl elev-2 p-6 gap-6 animate-fade-up"
           >
             {/* LEFT SIDE - IMAGES */}
-            <div className="lg:w-1/3 flex gap-2 overflow-x-auto">
+            <div className="lg:w-1/3 flex gap-2 overflow-x-auto no-scrollbar">
               {product.imageURL.map((img, i) => (
                 <img
                   key={i}
                   src={img}
-                  className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 object-cover rounded-lg flex-shrink-0"
+                  className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 object-cover rounded-xl flex-shrink-0 elev-1"
                   alt={`${product.name} image ${i + 1}`}
                 />
               ))}
@@ -163,14 +178,14 @@ export default function MyProductsPage() {
               <div className="flex flex-col sm:flex-row gap-3 mt-4">
                 <button
                   onClick={() => router.push(`/editProduct/${product._id}`)}
-                  className="px-4 py-2 bg-indigo-600 text-white font-medium rounded hover:bg-indigo-700"
+                  className="px-5 py-2 bg-gradient-to-br from-indigo-500 to-violet-600 text-white font-semibold rounded-xl shadow-[0_8px_18px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 transition-transform"
                 >
                   Edit
                 </button>
 
                 <button
                   onClick={() => deleteProduct(product._id)}
-                  className="px-4 py-2 bg-red-500 text-white font-medium rounded hover:bg-red-600"
+                  className="px-5 py-2 bg-gradient-to-br from-rose-500 to-red-600 text-white font-semibold rounded-xl shadow-[0_8px_18px_rgba(225,29,72,0.25)] hover:-translate-y-0.5 transition-transform"
                 >
                   Delete
                 </button>

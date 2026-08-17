@@ -63,30 +63,33 @@ export default function WishlistPage() {
   };
 
   return (
-    <div className="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+    <div className="text-gray-800 min-h-screen flex flex-col">
       {/* 🔝 NAVBAR */}
       <Navbar />
 
       {/* 🧾 PAGE TITLE */}
-      <div className="max-w-full mx-auto w-full px-4 sm:px-6 py-6">
-        <h1 className="text-2xl font-bold">My Wishlist ❤️</h1>
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8">
+        <h1 className="text-3xl font-black text-gray-900">
+          My <span className="text-gradient">Wishlist</span> ❤️
+        </h1>
       </div>
 
       {/* 📦 PRODUCT GRID */}
-      <div className="max-w-full mx-auto w-full px-4 sm:px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-grow">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 flex-grow perspective-1500">
         {products.length > 0 ? (
           products.map((product) => (
             <div
               key={product._id}
               onClick={() => router.push(`/product/${product._id}`)}
-              className="border rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition bg-white"
+              className="group lift rounded-2xl p-4 cursor-pointer bg-white/85 border border-white/70 elev-2 animate-fade-up"
             >
               {/* 🖼 IMAGE BOX */}
-              <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+              <div className="w-full h-64 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
                 <img
                   src={product.imageURL?.[0]}
                   alt={product.name}
-                  className="max-w-full max-h-full object-contain"
+                  loading="lazy"
+                  className="max-w-full max-h-full object-contain transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
 
@@ -153,9 +156,21 @@ export default function WishlistPage() {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center col-span-full">
-            Your wishlist is empty.
-          </p>
+          <div className="col-span-full text-center py-20 rounded-3xl glass elev-2 animate-fade-up">
+            <div className="text-6xl mb-4 animate-float">💝</div>
+            <p className="text-xl font-bold text-gray-800">
+              Your wishlist is empty
+            </p>
+            <p className="text-gray-500 mt-1">
+              Tap the heart on any product to save it here.
+            </p>
+            <button
+              onClick={() => router.push("/")}
+              className="sheen mt-6 px-6 py-3 rounded-2xl text-white font-semibold bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_12px_28px_rgba(79,70,229,0.35)] hover:-translate-y-0.5 transition-transform"
+            >
+              Discover Products →
+            </button>
+          </div>
         )}
       </div>
 

@@ -77,22 +77,22 @@ export default function ProductDetail({ product }: { product: Product }) {
 
   const displayedReviews = reviews;
   return (
-    <div className="bg-white">
+    <div className="min-h-screen">
       <Navbar />
 
-      <div className="bg-white min-h-screen max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 p-4 md:p-10">
+      <div className="min-h-screen max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 p-4 md:p-10 perspective-2000">
         {/* LEFT SIDE - IMAGE GALLERY */}
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:sticky md:top-28 md:self-start">
           {/* THUMBNAILS */}
-          <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-x-visible w-full md:w-auto">
+          <div className="flex md:flex-col gap-3 overflow-x-auto md:overflow-x-visible w-full md:w-auto">
             {product.imageURL?.slice(0, 3).map((img) => (
               <button
                 key={img}
                 onClick={() => setSelectedImage(img)}
-                className={`w-20 h-20 md:w-24 md:h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 flex items-center justify-center ${
+                className={`w-20 h-20 md:w-24 md:h-24 flex-shrink-0 rounded-xl overflow-hidden border-2 flex items-center justify-center bg-white transition-all duration-300 hover:-translate-y-1 ${
                   selectedImage === img
-                    ? "border-indigo-600 ring-2 ring-indigo-200"
-                    : "border-gray-200 hover:border-indigo-400"
+                    ? "border-indigo-600 ring-2 ring-indigo-200 elev-2"
+                    : "border-gray-200 hover:border-indigo-400 elev-1"
                 }`}
               >
                 <img
@@ -106,14 +106,20 @@ export default function ProductDetail({ product }: { product: Product }) {
 
           {/* MAIN IMAGE */}
           <div
-            className="relative bg-white rounded-xl overflow-hidden flex items-center justify-center cursor-zoom-in border border-black w-full md:w-[600px] aspect-square"
+            className="relative rounded-3xl overflow-hidden flex items-center justify-center cursor-zoom-in w-full md:w-[600px] aspect-square glass elev-4 p-6"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-20 -right-16 w-64 h-64 rounded-full blur-3xl opacity-50"
+              style={{ background: "radial-gradient(circle, rgba(99,102,241,0.35), transparent 60%)" }}
+            />
             <img
+              key={selectedImage}
               src={selectedImage}
               alt={product.name}
-              className="max-w-full max-h-full object-contain pointer-events-none transition-transform duration-200"
+              className="relative max-w-full max-h-full object-contain pointer-events-none transition-transform duration-200 animate-fade-in"
               style={{
                 transformOrigin: zoomPosition,
                 transform: zoomScale,
@@ -123,7 +129,7 @@ export default function ProductDetail({ product }: { product: Product }) {
         </div>
 
         {/* RIGHT SIDE - PRODUCT DETAILS */}
-        <div className="w-full max-w-xl">
+        <div className="w-full max-w-xl animate-fade-up">
           <h1 className="text-3xl font-bold text-gray-900 leading-tight">
             {product.name}
           </h1>
@@ -131,16 +137,16 @@ export default function ProductDetail({ product }: { product: Product }) {
           <p className="text-gray-500 mt-1">{product.companyName}</p>
 
           {/* PRICE */}
-          <div className="flex items-center gap-3 mt-4 flex-wrap">
-            <span className="text-3xl font-bold text-gray-900">
+          <div className="flex items-center gap-3 mt-5 flex-wrap rounded-2xl glass elev-1 px-5 py-4 w-fit">
+            <span className="text-4xl font-black text-gray-900">
               ₹{Math.round(product.finalPrice)}
             </span>
 
-            <span className="line-through text-gray-500">
+            <span className="line-through text-gray-400 text-lg">
               ₹{Math.round(product.currentPrice)}
             </span>
 
-            <span className="text-green-600 font-semibold">
+            <span className="px-2.5 py-1 rounded-full text-sm font-bold text-white bg-gradient-to-br from-emerald-500 to-green-600 shadow-[0_6px_14px_rgba(16,185,129,0.3)]">
               {product.discount}% off
             </span>
           </div>
@@ -240,9 +246,11 @@ export default function ProductDetail({ product }: { product: Product }) {
           {/* ADD TO CART */}
           <button
             onClick={addToCart}
-            className="mt-8 w-full py-3 rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition"
+            className="sheen mt-8 w-full py-4 rounded-2xl text-white font-bold text-lg
+              bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_16px_36px_rgba(79,70,229,0.4)]
+              hover:-translate-y-1 transition-transform"
           >
-            Add to Cart
+            🛒 Add to Cart
           </button>
         </div>
       </div>

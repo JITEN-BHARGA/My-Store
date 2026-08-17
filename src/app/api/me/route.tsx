@@ -11,7 +11,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const decoded = tokenVerify(token) as { id: string}
+    // tokenVerify returns null on failure (does NOT throw) — check explicitly.
+    const decoded = tokenVerify(token)
 
     if (!decoded?.id) {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 })
@@ -19,16 +20,17 @@ export async function GET(request: NextRequest) {
 
     await connectDB()
 
-    const user = await User.findById(decoded.id).select("name userName")
+    const user = await User.findById(decoded.id).select("name userName role")
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 })
-    } 
+    }
 
     return NextResponse.json({
       id: user._id,
       name: user.name,
       username: user.userName,
+      role: user.role ?? decoded.role ?? "customer",
     })
   } catch (error) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 })

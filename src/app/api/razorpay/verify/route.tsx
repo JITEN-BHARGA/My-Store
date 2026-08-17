@@ -1,11 +1,12 @@
 export const runtime = "nodejs";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import Order from "@/module/order";
 import { connectDB } from "@/app/_lib/databaseConnection";
+import { getUserIdFromToken } from "@/app/_lib/getUser";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const {
       razorpay_order_id,
@@ -29,6 +30,30 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
+
+    // 🔐 Auth
+    const userId = await getUserIdFromToken(req);
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    // 🔐 Ownership
+    const dbOrder = await Order.findById(orderId);
+    if (!dbOrder) {
+      return NextResponse.json(
+        { success: false, message: "Order not found" },
+        { status: 404 },
+      );
+    }
+    if (dbOrder.userId.toString() !== userId._id) {
+      return NextResponse.json(
+        { success: false, message: "Forbidden" },
+        { status: 403 },
+      );
+    }
 
     await Order.findByIdAndUpdate(orderId, {
       paymentMethod: "ONLINE",

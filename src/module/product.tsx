@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-enum Catagory {
+export const PRODUCT_CATEGORIES = [
   "Electronics",
   "Fashion",
   "Home & Kitchen",
@@ -11,7 +11,7 @@ enum Catagory {
   "Groceries",
   "Mobiles",
   "Accessories",
-}
+] as const;
 
 export interface ProductDocument extends Document {
   name: string;
@@ -20,7 +20,7 @@ export interface ProductDocument extends Document {
   discount?: number;
   finalPrice?: number;
   itemInfo: string;
-  category?: Catagory;
+  category?: string;
   companyName: string;
   sellerId: mongoose.Schema.Types.ObjectId;
   attributes?: Record<string, string | number | boolean>;
@@ -51,7 +51,7 @@ const ProductSchema = new Schema<ProductDocument>(
 
     itemInfo: { type: String, required: true },
 
-    category: { type: String },
+    category: { type: String, enum: PRODUCT_CATEGORIES },
 
     companyName: { type: String, required: true },
 

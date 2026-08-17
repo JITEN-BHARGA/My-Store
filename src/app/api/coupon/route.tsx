@@ -7,6 +7,14 @@ export async function POST(req: Request) {
     await connectDB();
     const { code, subtotal } = await req.json();
 
+    if (!code) {
+      return NextResponse.json({ message: "Coupon code required" }, { status: 400 });
+    }
+
+    if (typeof subtotal !== "number" || Number.isNaN(subtotal)) {
+      return NextResponse.json({ message: "Invalid subtotal" }, { status: 400 });
+    }
+
     const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
 
     if (!coupon) {

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {connectDB} from "@/app/_lib/databaseConnection";
 import Product from "@/module/product";
-
-// 🔐 Replace with real auth
-const getSellerId = (req: NextRequest) => {
-  return req.headers.get("x-seller-id") || "seller_123";
-};
+import { getUserIdFromToken } from "@/app/_lib/getUser";
 
 // 📄 GET SINGLE PRODUCT
 export async function GET(
@@ -17,7 +13,7 @@ export async function GET(
 
     const { id } = await context.params; // ✅ await params
 
-    const product = await Product.findById({_id : id});
+    const product = await Product.findById(id);
 
     if (!product) {
       return NextResponse.json(
@@ -44,7 +40,11 @@ export async function PATCH(
   try {
     await connectDB();
 
-    const sellerId = getSellerId(req);
+    const userId = await getUserIdFromToken(req);
+    if (!userId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
 
     const params = await context.params;
@@ -59,7 +59,7 @@ export async function PATCH(
       );
     }
 
-    if (product.sellerId !== sellerId) {
+    if (product.sellerId.toString() !== userId._id) {
       return NextResponse.json(
         { message: "Unauthorized" },
         { status: 403 }
@@ -96,7 +96,10 @@ export async function DELETE(
   try {
     await connectDB();
 
-    const sellerId = getSellerId(req);
+    const userId = await getUserIdFromToken(req);
+    if (!userId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
     const params = await context.params;
     const product = await Product.findById(params.id);
@@ -108,7 +111,7 @@ export async function DELETE(
       );
     }
 
-    if (product.sellerId !== sellerId) {
+    if (product.sellerId.toString() !== userId._id) {
       return NextResponse.json(
         { message: "Unauthorized" },
         { status: 403 }

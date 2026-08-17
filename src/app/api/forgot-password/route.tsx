@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import User from "@/module/user";
 
-import { sendResetEmail } from "@/app/lib/mailer";
+import { sendResetEmail } from "@/app/_lib/mailer";
 import { connectDB } from "@/app/_lib/databaseConnection";
 import PasswordResetToken from "@/module/PasswordResetToken";
 

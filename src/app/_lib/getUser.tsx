@@ -9,9 +9,11 @@ export async function getUserIdFromToken(req: NextRequest) {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
       id: string
+      role?: string
     }
 
-    return { _id: decoded.id }   // 👈 matches your existing route usage
+    // 👈 matches existing route usage ({ _id }) and now also carries role
+    return { _id: decoded.id, role: decoded.role ?? "customer" }
   } catch (error) {
     return null
   }

@@ -12,7 +12,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
 
-  const products = await Product.find({ sellerId: userId }).sort({ createdAt: -1 })
+  if (userId.role !== "seller") {
+    return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 })
+  }
+
+  const products = await Product.find({ sellerId: userId._id }).sort({ createdAt: -1 })
 
   return NextResponse.json({ products })
 }

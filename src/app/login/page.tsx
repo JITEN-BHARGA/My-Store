@@ -94,11 +94,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#eef2ff] p-4">
-      <div className="flex flex-col lg:flex-row w-full max-w-[900px] rounded-3xl shadow-xl overflow-hidden bg-white">
+    <div className="relative flex min-h-screen items-center justify-center p-4 overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 -left-24 w-[34rem] h-[34rem] rounded-full blur-3xl opacity-60 animate-aurora"
+        style={{ background: "radial-gradient(circle, rgba(99,102,241,0.5), transparent 60%)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -right-24 w-[34rem] h-[34rem] rounded-full blur-3xl opacity-50 animate-aurora"
+        style={{ background: "radial-gradient(circle, rgba(139,92,246,0.45), transparent 60%)", animationDelay: "3s" }}
+      />
+      <div className="relative flex flex-col lg:flex-row w-full max-w-[900px] rounded-3xl elev-4 overflow-hidden glass animate-fade-up">
         {/* LEFT SIDE FORM */}
-        <div className="w-full lg:w-1/2 p-6 sm:p-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+        <div className="w-full lg:w-1/2 p-6 sm:p-10 bg-white/80">
+          <h2 className="text-3xl font-black text-gray-900 mb-2">Login</h2>
           <p className="text-gray-500 mb-6">
             Welcome back! Please enter your details
           </p>
@@ -152,7 +162,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+              className="sheen w-full bg-gradient-to-br from-indigo-500 to-violet-600 text-white p-3.5 rounded-xl font-semibold shadow-[0_12px_28px_rgba(79,70,229,0.35)] hover:-translate-y-0.5 transition-transform disabled:opacity-70"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -184,9 +194,14 @@ export default function LoginPage() {
         </div>
 
         {/* RIGHT SIDE PANEL */}
-        <div className="w-full lg:w-1/2 bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center p-6 lg:p-0">
-          <div className="text-white text-center px-4">
-            <h3 className="text-2xl font-bold mb-3">Welcome Back 👋</h3>
+        <div className="relative w-full lg:w-1/2 bg-gradient-to-br from-indigo-500 via-violet-600 to-fuchsia-600 flex items-center justify-center p-8 lg:p-0 overflow-hidden">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-10 -right-10 w-56 h-56 rounded-full bg-white/20 blur-3xl animate-float"
+          />
+          <div className="relative text-white text-center px-6">
+            <div className="text-5xl mb-4 animate-float">🛍️</div>
+            <h3 className="text-2xl font-black mb-3">Welcome Back 👋</h3>
             <p className="text-indigo-100 text-sm">
               Login to continue managing your account securely and easily.
             </p>

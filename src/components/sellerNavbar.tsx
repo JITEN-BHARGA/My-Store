@@ -14,26 +14,31 @@ export default function SellerNavbar() {
   };
 
   return (
-    <nav className="bg-white border-b shadow-sm px-6 py-3 flex items-center justify-between relative">
+    <nav className="glass sticky top-0 z-50 px-6 py-3 flex items-center justify-between relative border-b border-white/60 shadow-[0_6px_20px_rgba(24,26,40,0.08)]">
       {/* 🔹 LOGO */}
-      <Link href="/dashboard" className="text-2xl font-bold text-indigo-600">
-        Seller Dashboard
+      <Link href="/dashboard" className="flex items-center gap-2">
+        <span className="grid place-items-center w-9 h-9 rounded-xl text-white text-lg font-black bg-gradient-to-br from-indigo-500 to-violet-600 shadow-[0_8px_18px_rgba(79,70,229,0.4)]">
+          M
+        </span>
+        <span className="text-xl font-extrabold tracking-tight text-gradient">
+          Seller Dashboard
+        </span>
       </Link>
 
       {/* 🔹 DESKTOP MENU */}
       <div className="hidden md:flex items-center gap-6 text-gray-700 font-medium">
-        <Link href="/seller" className="hover:text-indigo-600">
+        <Link href="/seller" className="hover:text-indigo-600 transition-colors">
           Add Product
         </Link>
-        <Link href="/my-products" className="hover:text-indigo-600">
+        <Link href="/my-products" className="hover:text-indigo-600 transition-colors">
           My Products
         </Link>
-        <Link href="/seller/orders" className="hover:text-indigo-600">
+        <Link href="/seller/orders" className="hover:text-indigo-600 transition-colors">
           Orders
         </Link>
         <button
           onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg"
+          className="bg-gradient-to-br from-rose-500 to-red-600 text-white px-4 py-1.5 rounded-xl font-semibold shadow-[0_8px_18px_rgba(225,29,72,0.3)] hover:-translate-y-0.5 transition-transform"
         >
           Logout
         </button>
@@ -49,7 +54,7 @@ export default function SellerNavbar() {
 
       {/* 🔹 MOBILE MENU */}
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white border-t shadow-md flex flex-col items-center gap-4 py-4 md:hidden z-50">
+        <div className="absolute top-full left-0 w-full glass border-t border-white/60 shadow-md flex flex-col items-center gap-4 py-4 md:hidden z-50 animate-fade-in">
           <Link href="/seller/dashboard" onClick={() => setMenuOpen(false)}>
             Dashboard
           </Link>

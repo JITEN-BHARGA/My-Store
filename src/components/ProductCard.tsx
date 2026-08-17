@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Product } from "@/types/product";
 import StarRating from "./starreview";
+import Tilt3D from "./Tilt3D";
 
 type Props = {
   product: Product;
@@ -11,6 +13,8 @@ type Props = {
 
 export default function ProductCard({ product, isLoggedIn }: Props) {
   const router = useRouter();
+  const [wished, setWished] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const addToCart = async () => {
     if (!isLoggedIn) {
@@ -29,8 +33,10 @@ export default function ProductCard({ product, isLoggedIn }: Props) {
       body: JSON.stringify({ productId: product._id, action: "add" }),
     });
 
-    if(res.ok)alert("Added to cart ✅");
-    else alert("Failed to add to cart");
+    if (res.ok) {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1400);
+    } else alert("Failed to add to cart");
   };
 
   const toggleWishlist = async () => {
@@ -39,6 +45,8 @@ export default function ProductCard({ product, isLoggedIn }: Props) {
       return;
     }
 
+    setWished((w) => !w);
+
     await fetch("/api/wishlist/toggle", {
       method: "POST",
       headers: {
@@ -46,26 +54,64 @@ export default function ProductCard({ product, isLoggedIn }: Props) {
       },
       body: JSON.stringify({ productId: product._id }),
     });
-
-    alert("Wishlist updated ❤️");
   };
 
   return (
-    <div
+    <Tilt3D
+      max={8}
+      lift={10}
+      glare
       onClick={() => router.push(`/product/${product._id}`)}
-      className="border rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition flex flex-col"
+      className="group relative rounded-2xl p-4 cursor-pointer flex flex-col bg-white/80 border border-white/70
+        backdrop-blur-sm elev-2 hover:elev-3"
     >
+      {/* Floating discount badge */}
+      {Number(product.discount) > 0 && (
+        <span
+          className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full text-xs font-bold text-white
+            bg-gradient-to-br from-rose-500 to-orange-500 shadow-[0_8px_18px_rgba(244,63,94,0.35)]"
+          style={{ transform: "translateZ(40px)" }}
+        >
+          {product.discount}% OFF
+        </span>
+      )}
+
+      {/* Wishlist heart */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleWishlist();
+        }}
+        aria-label="Toggle wishlist"
+        className="absolute top-3 right-3 z-10 grid place-items-center w-9 h-9 rounded-full
+          bg-white/80 border border-white/70 shadow-[0_4px_10px_rgba(24,26,40,0.1)]
+          transition-transform duration-300 hover:scale-110 active:scale-90"
+        style={{ transform: "translateZ(40px)" }}
+      >
+        <span className={`text-lg ${wished ? "scale-110" : ""} transition-transform`}>
+          {wished ? "❤️" : "🤍"}
+        </span>
+      </button>
+
       {/* 🖼 IMAGE BOX */}
-      <div className="w-full h-48 sm:h-56 md:h-64 lg:h-64 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+      <div
+        className="w-full h-48 sm:h-56 md:h-64 lg:h-64 rounded-xl flex items-center justify-center overflow-hidden
+          bg-gradient-to-b from-gray-50 to-gray-100"
+        style={{ transform: "translateZ(30px)" }}
+      >
         <img
           src={product.imageURL[0]}
           alt={product.name}
-          className="max-w-full max-h-full object-contain"
+          loading="lazy"
+          className="max-w-full max-h-full object-contain transition-transform duration-500 ease-out group-hover:scale-110"
         />
       </div>
 
       {/* 📦 PRODUCT NAME */}
-      <h3 className="font-semibold mt-3 text-sm sm:text-base md:text-base lg:text-lg">
+      <h3
+        className="font-semibold mt-3 text-sm sm:text-base md:text-base lg:text-lg text-gray-900 line-clamp-1"
+        style={{ transform: "translateZ(20px)" }}
+      >
         {product.name}
       </h3>
 
@@ -86,30 +132,30 @@ export default function ProductCard({ product, isLoggedIn }: Props) {
       </p>
 
       {/* 💰 PRICE */}
-      <div className="mt-2 flex items-center gap-4 text-sm sm:text-base">
-        <span className="font-bold text-gray-900">
+      <div className="mt-2 flex items-baseline gap-2 text-sm sm:text-base">
+        <span className="font-extrabold text-lg text-gray-900">
           ₹{Number(product.finalPrice).toFixed(2)}
         </span>
 
-        <span className="text-gray-500 line-through">
+        <span className="text-gray-400 line-through text-xs sm:text-sm">
           ₹{Number(product.currentPrice).toFixed(2)}
         </span>
 
-        <span className="text-green-600 font-semibold">
+        <span className="text-green-600 font-semibold text-xs sm:text-sm">
           {product.discount}% off
         </span>
       </div>
 
       {/* 🛒 ADD TO CART */}
-      <div className="mt-3 flex flex-col sm:flex-row gap-2">
+      <div className="mt-3 flex flex-col sm:flex-row gap-2" style={{ transform: "translateZ(15px)" }}>
         <button
           onClick={(e) => {
             e.stopPropagation();
             toggleWishlist();
           }}
-          className="flex-1 border border-gray-400 hover:border-red-500 text-gray-700 hover:text-red-500 px-4 py-2 rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base"
+          className="flex-1 border border-gray-300 hover:border-rose-400 text-gray-700 hover:text-rose-500 bg-white/60 px-4 py-2 rounded-xl flex items-center justify-center gap-2 text-sm sm:text-base transition-colors"
         >
-          <span>♡</span> Wishlist
+          <span>{wished ? "♥" : "♡"}</span> Wishlist
         </button>
 
         <button
@@ -117,17 +163,21 @@ export default function ProductCard({ product, isLoggedIn }: Props) {
             e.stopPropagation();
             addToCart();
           }}
-          className="flex-1 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 text-sm sm:text-base"
+          className={`sheen flex-1 py-2 rounded-xl text-white text-sm sm:text-base font-semibold shadow-[0_8px_18px_rgba(79,70,229,0.3)] transition-all ${
+            added
+              ? "bg-gradient-to-br from-emerald-500 to-green-600"
+              : "bg-gradient-to-br from-indigo-500 to-violet-600 hover:-translate-y-0.5"
+          }`}
         >
-          Add to Cart
+          {added ? "Added ✓" : "Add to Cart"}
         </button>
       </div>
 
       {!isLoggedIn && (
-        <p className="text-xs text-red-500 mt-2 text-center sm:text-sm">
+        <p className="text-xs text-rose-500 mt-2 text-center sm:text-sm">
           Login to purchase
         </p>
       )}
-    </div>
+    </Tilt3D>
   );
 }

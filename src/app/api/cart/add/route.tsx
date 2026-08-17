@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   if (!cart) {
     // create new cart with first product
-    cart = Cart.create({
+    cart = await Cart.create({
       userId,
       products: [{ productId, qty: 1 }],
     });

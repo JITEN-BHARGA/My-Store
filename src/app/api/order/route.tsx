@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 import cart from "@/module/cartItem";
-import "@/module/product";
+import Product from "@/module/product";
 import "@/module/address";
 import address from "@/module/address";
+import { Coupon } from "@/module/coupon";
 import { getUserIdFromToken } from "@/app/_lib/getUser";
 import { connectDB } from "@/app/_lib/databaseConnection";
 import order from "@/module/order";
+
+// Thrown inside the transaction when a product lacks stock, so the whole
+// order aborts atomically.
+class InsufficientStockError extends Error {
+  insufficientStock = true;
+  productId: string;
+  constructor(productId: string) {
+    super("Insufficient stock");
+    this.productId = productId;
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -40,6 +53,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await mongoose.startSession();
   try {
     await connectDB();
 
@@ -49,7 +63,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { addressId, coupon } = await req.json();
+    // ⚠️ Client-sent discount/total are never trusted — accept only a coupon code.
+    const body = await req.json();
+    const addressId = body.addressId;
+    const couponCode = body.couponCode ?? body.coupon;
 
     if (!addressId) {
       return NextResponse.json(
@@ -77,21 +94,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Cart is empty" }, { status: 400 });
     }
 
-    // ✅ Build order items from cart.products[]
+    // ✅ Build order items from cart.products[] — price only from DB finalPrice.
     const items = userCart.products.map((item: any) => ({
       productId: item.productId._id,
       qty: item.qty,
       price: item.productId.finalPrice,
     }));
 
+    // 🔒 subtotal is computed only from DB finalPrice.
     const subtotal = items.reduce(
       (acc: number, item: any) => acc + item.price * item.qty,
       0,
     );
 
+    // 🔒 Coupon is validated server-side against the DB — client discount ignored.
     let discount = 0;
-    if (coupon === "SAVE10") {
-      discount = subtotal * 0.1;
+    let appliedCode = "";
+    if (couponCode) {
+      const dbCoupon = await Coupon.findOne({
+        code: String(couponCode).toUpperCase(),
+        isActive: true,
+      });
+
+      if (dbCoupon && subtotal >= (dbCoupon.minPurchase || 0)) {
+        discount =
+          dbCoupon.type === "percent"
+            ? (subtotal * dbCoupon.value) / 100
+            : dbCoupon.value;
+        discount = Math.min(discount, subtotal); // never below zero
+        appliedCode = dbCoupon.code;
+      }
     }
 
     const total = subtotal - discount;
@@ -99,26 +131,60 @@ export async function POST(req: NextRequest) {
     const deliveryDate = new Date();
     deliveryDate.setDate(deliveryDate.getDate() + 7);
 
-    const newOrder = await order.create({
-      userId,
-      items,
-      addressId,
-      subtotal,
-      discount,
-      total,
-      paymentMethod: "ONLINE PAYMENT",
-      status: "Placed",
-      deliveryDate,
-      isDelivered: false,
+    // 🔒 Stock decrement + order create + cart clear are one atomic transaction.
+    let newOrder: any;
+    await session.withTransaction(async () => {
+      // Atomic, guarded stock decrement — rejects overselling.
+      for (const item of items) {
+        const result = await Product.updateOne(
+          { _id: item.productId, stock: { $gte: item.qty } },
+          { $inc: { stock: -item.qty } },
+          { session },
+        );
+        if (result.modifiedCount !== 1) {
+          throw new InsufficientStockError(item.productId.toString());
+        }
+      }
+
+      const created = await order.create(
+        [
+          {
+            userId,
+            items,
+            addressId,
+            subtotal,
+            discount,
+            couponCode: appliedCode,
+            total,
+            paymentMethod: "ONLINE PAYMENT",
+            status: "Placed",
+            deliveryDate,
+            isDelivered: false,
+          },
+        ],
+        { session },
+      );
+      newOrder = created[0];
+
+      // 🔥 Clear cart properly (array structure)
+      userCart.products = [];
+      await userCart.save({ session });
     });
 
-    // 🔥 Clear cart properly (array structure)
-    userCart.products = [];
-    await userCart.save();
-
     return NextResponse.json({ order: newOrder }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
+    if (error instanceof InsufficientStockError) {
+      return NextResponse.json(
+        {
+          message: "Insufficient stock",
+          productId: error.productId,
+        },
+        { status: 400 },
+      );
+    }
     console.error(error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } finally {
+    await session.endSession();
   }
 }

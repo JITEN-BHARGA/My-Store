@@ -16,9 +16,13 @@ export async function GET(
     const { id } = await context.params; // ✅ await params
 
     const user = await getUserIdFromToken(req);
-    
+
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    if (user.role !== "seller") {
+      return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 });
     }
 
     const product = await Product.findOne({
@@ -50,6 +54,9 @@ export async function PATCH(
   const userId = await getUserIdFromToken(req);
   if (!userId)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+  if (userId.role !== "seller")
+    return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 });
 
   const body = await req.json();
 
@@ -86,7 +93,7 @@ export async function PATCH(
 
 
   const product = await Product.findOneAndUpdate(
-    {$or : [{ _id: id}, {sellerId: userId }]},
+    { _id: id, sellerId: userId._id },
     updateData,
     { new: true },
   );
@@ -111,8 +118,12 @@ export async function DELETE(
   if (!userId)
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
+  if (userId.role !== "seller")
+    return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 });
+
   const deleted = await Product.findOneAndDelete({
-    $or : [{_id: params.id},{sellerId: userId}]
+    _id: params.id,
+    sellerId: userId._id,
   });
 
   if (!deleted) {

@@ -12,12 +12,9 @@ export async function GET(
     await connectDB();
 
     const { id } = await context.params;
-    const userId = await getUserIdFromToken(req); 
-    
-    const Product = await product.findOne({
-      _id: id,
-      "reviews.userId": userId
-    }).lean();
+
+    // Reviews are public — fetch by product id only.
+    const Product = await product.findById(id).lean();
 
     if (!Product) {
       return NextResponse.json(

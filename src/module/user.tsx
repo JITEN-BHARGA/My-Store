@@ -5,6 +5,7 @@ export interface IUser {
   name: string;
   userName: string;
   password: string;
+  role?: "customer" | "seller";
   isVerified: boolean;
   verifyToken?: string;
   verifyTokenExpiry?: Date;
@@ -16,6 +17,12 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true, lowercase: true },
     userName: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength: 6 },
+
+    role: {
+      type: String,
+      enum: ["customer", "seller"],
+      default: "customer",
+    },
 
     isVerified: {
       type: Boolean,

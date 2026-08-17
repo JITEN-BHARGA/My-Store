@@ -26,7 +26,7 @@ export async function POST(request : NextRequest){
             })
         }
 
-        const existUser = await User.findOne({$and : [{email : data.email, isVerified : true}]})
+        const existUser = await User.findOne({ email : data.email, isVerified : true })
 
         if(!existUser){
             return NextResponse.json({
@@ -43,10 +43,12 @@ export async function POST(request : NextRequest){
             return NextResponse.json({
                 message : "invalid password",
                 success : false
+            },{
+                status : 401
             })
         }
 
-        const token = jwtGeneration(existUser._id.toString());
+        const token = jwtGeneration(existUser._id.toString(), existUser.role)
 
 
 
@@ -72,5 +74,3 @@ export async function POST(request : NextRequest){
         })
     }
 }
-
-

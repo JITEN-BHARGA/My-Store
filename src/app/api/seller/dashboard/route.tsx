@@ -12,6 +12,9 @@ export async function GET(req: NextRequest) {
   if (!sellerId) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
   }
+  if (sellerId.role !== "seller") {
+    return NextResponse.json({ message: "Forbidden: sellers only" }, { status: 403 })
+  }
   const sellerObjectId = new mongoose.Types.ObjectId(sellerId._id)
 
   // 1️⃣ Get all product IDs for this seller

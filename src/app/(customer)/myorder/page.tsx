@@ -55,6 +55,8 @@ export default function MyOrdersPage() {
       ordersData.map(async (order) => {
         for (const item of order.items) {
           if (!item.isDelivered) continue;
+          // Product may have been deleted — its populated ref is then null.
+          if (!item.productId?._id) continue;
 
           try {
             const res = await fetch(`/api/reviews/${item.productId._id}`, {
@@ -83,6 +85,10 @@ export default function MyOrdersPage() {
   };
 
   const handleSubmitReview = async (item: OrderItem) => {
+    if (!item.productId?._id) {
+      alert("This product is no longer available");
+      return;
+    }
     if (!ratings[item._id]) {
       alert("Please select a rating");
       return;
@@ -135,28 +141,36 @@ export default function MyOrdersPage() {
   if (orders.length === 0) return <p className="p-4">No orders found.</p>;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
+    <div className="min-h-screen text-gray-800">
       <Navbar />
 
-      <section className="bg-indigo-600 text-white text-center py-12">
-        <h2 className="text-3xl font-bold">My Orders</h2>
-        <p className="text-gray-100 mt-2">
+      <section className="relative overflow-hidden text-white text-center py-16 px-4 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-16 -right-10 w-72 h-72 rounded-full bg-white/20 blur-3xl animate-float"
+        />
+        <h2 className="relative text-3xl sm:text-4xl font-black">My Orders</h2>
+        <p className="relative text-indigo-100 mt-2">
           Track, manage and review your orders
         </p>
       </section>
 
       <section className="px-4 sm:px-6 py-10 max-w-6xl mx-auto space-y-6">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">Recent Orders</h2>
+        <h2 className="text-2xl font-extrabold mb-6 text-gray-900">
+          Recent Orders
+        </h2>
 
         <div className="space-y-6">
           {orders.map((order) => (
             <div
               key={order._id}
-              className="bg-white rounded-lg shadow-sm border p-5"
+              className="bg-white/85 border border-white/70 rounded-2xl elev-2 p-5 animate-fade-up"
             >
               <div className="flex justify-between items-center px-2 py-2 mb-4">
-                <p className="text-sm font-semibold">Order ID: {order._id}</p>
-                <p className="text-sm font-bold text-green-600">
+                <p className="text-sm font-semibold text-gray-700">
+                  Order ID: {order._id}
+                </p>
+                <p className="text-sm font-black text-gradient">
                   ₹{order.total}
                 </p>
               </div>
@@ -236,7 +250,7 @@ export default function MyOrdersPage() {
                         </div>
                       )}
 
-                      {isDelivered && !submitted[item._id] && (
+                      {isDelivered && item.productId && !submitted[item._id] && (
                         <div className="mt-4 border-t pt-3">
                           <p className="text-sm font-medium mb-1">
                             Rate this product:
@@ -268,13 +282,13 @@ export default function MyOrdersPage() {
                                 [item._id]: e.target.value,
                               }))
                             }
-                            className="w-full border rounded p-2 text-sm mb-2"
+                            className="input text-sm mb-2"
                             rows={3}
                           />
 
                           <button
                             onClick={() => handleSubmitReview(item)}
-                            className="bg-indigo-600 text-white px-4 py-1.5 rounded text-sm hover:bg-indigo-700"
+                            className="bg-gradient-to-br from-indigo-500 to-violet-600 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-[0_8px_18px_rgba(79,70,229,0.3)] hover:-translate-y-0.5 transition-transform"
                           >
                             Submit Review
                           </button>
